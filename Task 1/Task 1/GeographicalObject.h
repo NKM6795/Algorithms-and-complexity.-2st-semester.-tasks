@@ -18,6 +18,7 @@ class GeographicalObject
 
 public:
 	GeographicalObject();
+	GeographicalObject(string name, string additionalInformation);
 	GeographicalObject(string name, string additionalInformation, vector<shared_ptr<GeographicalObject> > &ownedObjects);
 
 	void setName(string name);

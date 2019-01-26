@@ -6,6 +6,11 @@ GeographicalObject::GeographicalObject()
 
 }
 
+GeographicalObject::GeographicalObject(string name, string additionalInformation) : name(name), additionalInformation(additionalInformation)
+{
+
+}
+
 GeographicalObject::GeographicalObject(string name, string additionalInformation, vector<shared_ptr<GeographicalObject> > &ownedObjects) : name(name), additionalInformation(additionalInformation), ownedObjects(ownedObjects)
 {
 

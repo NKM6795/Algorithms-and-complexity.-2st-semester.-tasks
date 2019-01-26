@@ -117,9 +117,11 @@
   <ItemGroup>
     <ClCompile Include="GeographicalObject.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="WorkWwithWorldMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeographicalObject.h" />
+    <ClInclude Include="WorkWwithWorldMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
