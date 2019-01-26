@@ -23,6 +23,9 @@
     <ClCompile Include="Demonstration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Hash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeographicalObject.h">
@@ -32,6 +35,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Demonstration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
