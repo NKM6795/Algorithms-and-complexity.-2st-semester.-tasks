@@ -115,11 +115,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Demonstration.cpp" />
     <ClCompile Include="GeographicalObject.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="WorkWwithWorldMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Demonstration.h" />
     <ClInclude Include="GeographicalObject.h" />
     <ClInclude Include="WorkWwithWorldMap.h" />
   </ItemGroup>

@@ -20,12 +20,18 @@
     <ClCompile Include="WorkWwithWorldMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Demonstration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeographicalObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WorkWwithWorldMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Demonstration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

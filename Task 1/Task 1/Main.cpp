@@ -1,10 +1,7 @@
-#include <iostream>
-
-
-using namespace std;
+#include "Demonstration.h"
 
 
 int main()
 {
-	cout << "Hi World\n";
+	demonstration("Data/Cities ane countries.dat");
 }

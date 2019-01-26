@@ -59,9 +59,6 @@ void WorkWwithWorldMap::createWorldMap(string name)
 		if (firstPass || oldCountry == country)
 		{
 			firstPass = false;
-
-			oldCountry = country;
-			oldContinent = continent;
 		}
 		else if (oldCountry != country)
 		{
@@ -69,8 +66,10 @@ void WorkWwithWorldMap::createWorldMap(string name)
 
 			cities.clear();
 		}
-		
 
+		oldCountry = country;
+		oldContinent = continent;
+		
 		cities.push_back(shared_ptr<GeographicalObject>(new GeographicalObject(city, population)));
 	}
 
