@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClCompile Include="Demonstration.cpp" />
     <ClCompile Include="GeographicalObject.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="WorkWwithWorldMap.cpp" />
@@ -124,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="Demonstration.h" />
     <ClInclude Include="GeographicalObject.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="WorkWwithWorldMap.h" />
   </ItemGroup>

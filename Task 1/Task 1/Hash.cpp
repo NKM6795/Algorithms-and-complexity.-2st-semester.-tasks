@@ -1,7 +1,7 @@
 #include "Hash.h"
 
 
-int getFirstHash(string name, int seed)
+int getFirstHash(string name, int seed, int length)
 {
 	int hash = 0;
 
@@ -10,10 +10,10 @@ int getFirstHash(string name, int seed)
 		hash = hash ^ (name[i] * seed);
 	}
 
-	return hash;
+	return hash % length;
 }
 
-int getSecondHash(string name, int seed)
+int getSecondHash(string name, int seed, int length)
 {
 	int hash = 0;
 
@@ -22,5 +22,5 @@ int getSecondHash(string name, int seed)
 		hash = ~(hash ^ ~ (name[i] * seed));
 	}
 
-	return hash;
+	return hash % length;
 }

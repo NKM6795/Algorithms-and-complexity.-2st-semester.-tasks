@@ -11,9 +11,9 @@ GeographicalObject::GeographicalObject(string name, string additionalInformation
 
 }
 
-GeographicalObject::GeographicalObject(string name, string additionalInformation, vector<shared_ptr<GeographicalObject> > &ownedObjects) : name(name), additionalInformation(additionalInformation), ownedObjects(ownedObjects)
+GeographicalObject::GeographicalObject(string name, string additionalInformation, vector<shared_ptr<GeographicalObject> > &ownedObjects) : name(name), additionalInformation(additionalInformation)
 {
-
+	setOwnedObjects(ownedObjects);
 }
 
 
@@ -52,6 +52,8 @@ string GeographicalObject::getAdditionalInformation()
 void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects)
 {
 	this->ownedObjects = ownedObjects;
+
+
 }
 
 vector<shared_ptr<GeographicalObject> > &GeographicalObject::getOwnedObjects()
