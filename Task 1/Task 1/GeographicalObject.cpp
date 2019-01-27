@@ -53,7 +53,10 @@ void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> >
 {
 	this->ownedObjects = ownedObjects;
 
+	pair<int, vector<int> > dataToHash = Graph::getDataToHash(this->ownedObjects);
 
+	seed = dataToHash.first;
+	mainHash = dataToHash.second;
 }
 
 vector<shared_ptr<GeographicalObject> > &GeographicalObject::getOwnedObjects()

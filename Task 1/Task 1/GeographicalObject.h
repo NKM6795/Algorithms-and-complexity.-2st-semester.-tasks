@@ -17,6 +17,9 @@ class GeographicalObject
 
 	vector<shared_ptr<GeographicalObject> > ownedObjects;
 
+	int seed;
+	vector<int> mainHash;
+
 public:
 	GeographicalObject();
 	GeographicalObject(string name, string additionalInformation);
