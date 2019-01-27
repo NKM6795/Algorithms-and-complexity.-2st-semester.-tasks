@@ -122,10 +122,5 @@ pair<int, vector<int> > Graph::getDataToHash(vector<shared_ptr<GeographicalObjec
 		}
 	}
 
-	for (int i = 0; i < length; ++i)
-	{
-		cout << result[firstHash[i]] + result[secondHash[i]] << '\n';
-	}
-
 	return { seed, result };
 }

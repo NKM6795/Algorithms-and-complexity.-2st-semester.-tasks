@@ -63,3 +63,9 @@ vector<shared_ptr<GeographicalObject> > &GeographicalObject::getOwnedObjects()
 {	
 	return ownedObjects;
 }
+
+
+shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(string name)
+{
+	return ownedObjects[mainHash[getFirstHash(name, seed, 2 * int(ownedObjects.size()))] + mainHash[getSecondHash(name, seed, 2 * int(ownedObjects.size()))]];
+}

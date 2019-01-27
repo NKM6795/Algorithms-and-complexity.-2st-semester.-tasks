@@ -77,3 +77,9 @@ void WorkWwithWorldMap::createWorldMap(string name)
 
 	worldMap = shared_ptr<GeographicalObject>(new GeographicalObject("World map", "Megacity list", countries));
 }
+
+
+shared_ptr<GeographicalObject> WorkWwithWorldMap::getWorldMap()
+{
+	return worldMap;
+}

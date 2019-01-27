@@ -17,4 +17,5 @@ public:
 
 	void createWorldMap(string name);
 
+	shared_ptr<GeographicalObject> getWorldMap();
 };
