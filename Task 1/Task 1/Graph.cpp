@@ -65,11 +65,11 @@ pair<int, vector<int> > Graph::getDataToHash(vector<shared_ptr<GeographicalObjec
 
 		for (int i = 0; i < length; ++i)
 		{
-			firstHash[i] = getFirstHash(objects[i]->getName(), seed, 2 * length);
-			secondHash[i] = getSecondHash(objects[i]->getName(), seed, 2 * length);
+			firstHash[i] = getFirstHash(objects[i]->getName(), seed, 20 * length);
+			secondHash[i] = getSecondHash(objects[i]->getName(), seed, 20 * length);
 		}
 
-		vector<vector<int> > graph(2 * length);
+		vector<vector<int> > graph(20 * length);
 		
 		for (int i = 0; i < length; ++i)
 		{
@@ -77,11 +77,11 @@ pair<int, vector<int> > Graph::getDataToHash(vector<shared_ptr<GeographicalObjec
 			graph[secondHash[i]].push_back(firstHash[i]);
 		}
 
-		vector<int> color(2 * length, -1);
+		vector<int> color(20 * length, -1);
 
 		bool hasACycle = false;
 
-		for (int i = 0; i < 2 * length && !hasACycle; ++i)
+		for (int i = 0; i < 20 * length && !hasACycle; ++i)
 		{
 			if (color[i] == -1 && graph[i].size() > 0)
 			{
@@ -102,7 +102,7 @@ pair<int, vector<int> > Graph::getDataToHash(vector<shared_ptr<GeographicalObjec
 		}
 	}
 
-	vector<vector<pair<int, int> > > graph(2 * length);
+	vector<vector<pair<int, int> > > graph(20 * length);
 
 	for (int i = 0; i < length; ++i)
 	{
@@ -110,15 +110,15 @@ pair<int, vector<int> > Graph::getDataToHash(vector<shared_ptr<GeographicalObjec
 		graph[secondHash[i]].push_back({ firstHash[i], i });
 	}
 
-	vector<int> result(2 * length, 2 * length);
+	vector<int> result(20 * length, 20 * length);
 
-	for (int i = 0; i < 2 * length; ++i)
+	for (int i = 0; i < 20 * length; ++i)
 	{
-		if (result[i] == 2 * length)
+		if (result[i] == 20 * length)
 		{
 			result[i] = 0;
 
-			fillingInTheSourceTable(result, graph, i, 2 * length);
+			fillingInTheSourceTable(result, graph, i, 20 * length);
 		}
 	}
 
