@@ -6,12 +6,12 @@ GeographicalObject::GeographicalObject()
 
 }
 
-GeographicalObject::GeographicalObject(string name, string additionalInformation) : name(name), additionalInformation(additionalInformation)
+GeographicalObject::GeographicalObject(string name, long additionalInformation) : name(name), additionalInformation(additionalInformation)
 {
 
 }
 
-GeographicalObject::GeographicalObject(string name, string additionalInformation, vector<shared_ptr<GeographicalObject> > &ownedObjects) : name(name), additionalInformation(additionalInformation)
+GeographicalObject::GeographicalObject(string name, long additionalInformation, vector<shared_ptr<GeographicalObject> > &ownedObjects) : name(name), additionalInformation(additionalInformation)
 {
 	setOwnedObjects(ownedObjects);
 }
@@ -33,17 +33,17 @@ string GeographicalObject::getName()
 }
 
 
-void GeographicalObject::setAdditionalInformation(string additionalInformation)
+void GeographicalObject::setAdditionalInformation(long additionalInformation)
 {
 	this->additionalInformation = additionalInformation;
 }
 
-void GeographicalObject::setAdditionalInformation(string &additionalInformation)
+void GeographicalObject::setAdditionalInformation(long &additionalInformation)
 {
 	this->additionalInformation = additionalInformation;
 }
 
-string GeographicalObject::getAdditionalInformation()
+long GeographicalObject::getAdditionalInformation()
 {
 	return additionalInformation;
 }
@@ -52,11 +52,6 @@ string GeographicalObject::getAdditionalInformation()
 void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects)
 {
 	this->ownedObjects = ownedObjects;
-
-	pair<int, vector<int> > dataToHash = Graph::getDataToHash(this->ownedObjects);
-
-	seed = dataToHash.first;
-	mainHash = dataToHash.second;
 }
 
 vector<shared_ptr<GeographicalObject> > &GeographicalObject::getOwnedObjects()
@@ -65,7 +60,7 @@ vector<shared_ptr<GeographicalObject> > &GeographicalObject::getOwnedObjects()
 }
 
 
-shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(string name)
+shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(long additionalInformation)
 {
-	return ownedObjects[mainHash[getFirstHash(name, seed, 20 * int(ownedObjects.size()))] + mainHash[getSecondHash(name, seed, 20 * int(ownedObjects.size()))]];
+	return ownedObjects[0];
 }

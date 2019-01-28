@@ -10,6 +10,7 @@ class WorkWwithWorldMap
 	shared_ptr<GeographicalObject> worldMap;
 
 	void getInformationFromTheLine(string &line, string &result, int &position);
+	void getInformationFromTheLine(string &line, long &result, int &position);
 
 public:
 	WorkWwithWorldMap();
