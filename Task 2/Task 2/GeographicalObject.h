@@ -1,7 +1,7 @@
 #pragma once
 
 
-//#include "Graph.h"
+#include "Graph.h"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -10,12 +10,15 @@
 using namespace std;
 
 
+class Graph;
+
+
 class GeographicalObject
 {
 	string name;
 	long additionalInformation;
 
-	vector<shared_ptr<GeographicalObject> > ownedObjects;
+	Graph ownedObjects;
 	
 public:
 	GeographicalObject();
@@ -31,7 +34,6 @@ public:
 	long getAdditionalInformation();
 
 	void setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects);
-	vector<shared_ptr<GeographicalObject> > &getOwnedObjects();
 
-	shared_ptr<GeographicalObject> getOwnedObject(long additionalInformation);
+	shared_ptr<GeographicalObject> getOwnedObject(int position);
 };

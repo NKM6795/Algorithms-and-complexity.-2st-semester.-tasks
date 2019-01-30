@@ -51,16 +51,14 @@ long GeographicalObject::getAdditionalInformation()
 
 void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects)
 {
-	this->ownedObjects = ownedObjects;
+	for (int i = 0; i < int(ownedObjects.size()); ++i)
+	{
+		this->ownedObjects.addVertex(ownedObjects[i]);
+	}
 }
 
-vector<shared_ptr<GeographicalObject> > &GeographicalObject::getOwnedObjects()
-{	
-	return ownedObjects;
-}
 
-
-shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(long additionalInformation)
+shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(int position)
 {
 	return ownedObjects[0];
 }

@@ -27,6 +27,9 @@
     <ClCompile Include="WorkWwithWorldMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demonstration.h">
@@ -36,6 +39,9 @@
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="WorkWwithWorldMap.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
