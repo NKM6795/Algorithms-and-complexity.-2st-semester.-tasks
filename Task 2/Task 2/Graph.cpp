@@ -130,6 +130,10 @@ void Graph::rotateLeft(shared_ptr<Node> node)
 			node->parent->right = current;
 		}
 	}
+	else
+	{
+		root = current;
+	}
 
 	node->right = current->left;
 	if (current->left)
@@ -169,6 +173,10 @@ void Graph::rotateRight(shared_ptr<Node> node)
 		{
 			node->parent->right = current;
 		}
+	}
+	else
+	{
+		root = current;
 	}
 
 	node->left = current->right;
@@ -232,9 +240,6 @@ void Graph::variant4(shared_ptr<Node> node)
 
 	if (node == node->parent->right && node->parent == grandparent->left)
 	{
-		rotateLeft(node->parent);
-		rotateRight(node);
-
 		rotateLeft(node->parent);
 
 		node = node->left;

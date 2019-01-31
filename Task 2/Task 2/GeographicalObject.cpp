@@ -60,5 +60,5 @@ void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> >
 
 shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(int position)
 {
-	return ownedObjects[0];
+	return ownedObjects[position];
 }

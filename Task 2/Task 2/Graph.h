@@ -60,6 +60,46 @@ public:
 
 	shared_ptr<GeographicalObject> operator [] (int i)
 	{
-		return root->cost;
+		if (i <= 0)
+		{
+			i = 0;
+		}
+
+		shared_ptr<Node> node = root;
+
+		bool find = false;
+
+		while (!find)
+		{
+			int value;
+			if (node->left)
+			{
+				value = node->left->dimension;
+			}
+			else
+			{
+				value = 0;
+			}
+
+			if (i == value)
+			{
+				find = true;
+			}
+			else if (i < value)
+			{
+				node = node->left;
+			}
+			else if (node->right)
+			{
+				i -= value + 1;
+				node = node->right;
+			}
+			else
+			{
+				find = true;
+			}
+		}
+
+		return node->cost;
 	}
 };
