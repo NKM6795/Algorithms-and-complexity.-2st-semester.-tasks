@@ -2,22 +2,22 @@
 #include "GeographicalObject.h"
 
 
-Graph::Node::Node() : color(false), dimension(1)
+Graph::Node::Node()
 {
 
 }
 
-Graph::Node::Node(shared_ptr<GeographicalObject> cost) : color(false), dimension(1), cost(cost)
+Graph::Node::Node(shared_ptr<GeographicalObject> cost) : cost(cost)
 {
 
 }
 
-Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent) : color(false), dimension(1), cost(cost), parent(parent)
+Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent) : cost(cost), parent(parent)
 {
 
 }
 
-Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent, shared_ptr<Node> left, shared_ptr<Node> right) : color(false), dimension(1), cost(cost), parent(parent), left(left), right(right)
+Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent, shared_ptr<Node> left, shared_ptr<Node> right) : cost(cost), parent(parent), left(left), right(right)
 {
 
 }
@@ -53,18 +53,6 @@ void Graph::insert(shared_ptr<Node> parent, shared_ptr<Node> node)
 				return;
 			}
 		}
-	}
-}
-
-
-void Graph::smallRecount(shared_ptr<Node> node)
-{
-	shared_ptr<Node> current = node;
-
-	while (current->parent)
-	{
-		current = current->parent;
-		++current->dimension;
 	}
 }
 
@@ -105,19 +93,6 @@ void Graph::rotateLeft(shared_ptr<Node> node)
 {
 	shared_ptr<Node> current = node->right;
 
-	//Recount
-	{
-		int tempDimention = node->dimension;
-
-		if (current->right)
-		{
-			node->dimension -= current->right->dimension;
-		}
-		node->dimension -= 1;
-
-		current->dimension = tempDimention;
-	}
-
 	current->parent = node->parent;
 	if (node->parent)
 	{
@@ -149,19 +124,6 @@ void Graph::rotateRight(shared_ptr<Node> node)
 {
 	shared_ptr<Node> current = node->left;
 
-	//Recount
-	{
-		int tempDimention = node->dimension;
-
-		if (current->left)
-		{
-			node->dimension -= current->left->dimension;
-		}
-		node->dimension -= 1;
-
-		current->dimension = tempDimention;
-	}
-
 	current->parent = node->parent;
 	if (node->parent)
 	{
@@ -190,84 +152,107 @@ void Graph::rotateRight(shared_ptr<Node> node)
 }
 
 
-void Graph::variant1(shared_ptr<Node> node)
+void Graph::splay(shared_ptr<Node> node)
 {
 	if (!node->parent)
 	{
 		root = node;
-		root->color = true;
 	}
 	else
 	{
-		variant2(node);
+		while (true)
+		{
+			if (node == root)
+			{
+				return;
+			}
+			shared_ptr<Node> parent = node->parent;
+
+			if (parent == root)
+			{
+				zig(node);
+
+				return;
+			}
+
+			zigZig(node);
+
+			zigZag(node);
+		}
 	}
 }
 
-void Graph::variant2(shared_ptr<Node> node)
+
+void Graph::zig(shared_ptr<Node> node)
 {
-	if (node->parent->color)
-	{
-		return;
-	}
-	else
-	{
-		variant3(node);
-	}
-}
-
-void Graph::variant3(shared_ptr<Node> node)
-{
-	shared_ptr<Node> uncle = getUncle(node),
-		grandparent = getGrandparent(node);
-
-	if (uncle && !uncle->color)
-	{
-		node->parent->color = true;
-		uncle->color = true;
-
-		grandparent->color = false;
-		variant1(grandparent);
-	}
-	else
-	{
-		variant4(node);
-	}
-}
-
-void Graph::variant4(shared_ptr<Node> node)
-{
-	shared_ptr<Node> grandparent = getGrandparent(node);
-
-	if (node == node->parent->right && node->parent == grandparent->left)
-	{
-		rotateLeft(node->parent);
-
-		node = node->left;
-	}
-	else if (node == node->parent->left && node->parent == grandparent->right)
+	if (node == node->parent->left)
 	{
 		rotateRight(node->parent);
-
-		node = node->right;
-	}
-
-	variant5(node);
-}
-
-void Graph::variant5(shared_ptr<Node> node)
-{
-	shared_ptr<Node> grandparent = getGrandparent(node);
-
-	node->parent->color = true;
-	grandparent->color = false;
-
-	if (node == node->parent->left && node->parent == grandparent->left)
-	{
-		rotateRight(grandparent);
 	}
 	else
 	{
-		rotateLeft(grandparent);
+		rotateLeft(node->parent);
+	}
+
+	root = node;
+}
+
+void Graph::zigZig(shared_ptr<Node> node)
+{
+	shared_ptr<Node> grandparent = getGrandparent(node);
+
+	if (node->parent && grandparent)
+	{
+		if (node == node->parent->left && node->parent == grandparent->left)
+		{
+			rotateRight(grandparent);
+			rotateRight(node->parent);
+
+			if (grandparent == root)
+			{
+				root = node;
+			}
+		}
+		else if (node == node->parent->right && node->parent == grandparent->right)
+		{
+			rotateLeft(grandparent);
+			rotateLeft(node->parent);
+
+			if (grandparent == root)
+			{
+				root = node;
+			}
+		}
+
+	}
+}
+
+void Graph::zigZag(shared_ptr<Node> node)
+{
+	shared_ptr<Node> grandparent = getGrandparent(node);
+
+	if (node->parent && grandparent)
+	{
+		if (node == node->parent->left && node->parent == grandparent->right)
+		{
+			rotateRight(node->parent);
+			rotateLeft(grandparent);
+
+			if (grandparent == root)
+			{
+				root = node;
+			}
+		}
+		else if (node == node->parent->right && node->parent == grandparent->left)
+		{
+			rotateLeft(node->parent);
+			rotateRight(grandparent);
+
+			if (grandparent == root)
+			{
+				root = node;
+			}
+		}
 	}
 }
 
@@ -284,7 +269,41 @@ void Graph::addVertex(shared_ptr<GeographicalObject> cost)
 	
 	insert(root, node);
 
-	smallRecount(node);
+	splay(node);
+}
 
-	variant1(node);
+
+shared_ptr<GeographicalObject> Graph::getVertex(long information)
+{
+	shared_ptr<Node> node = root;
+
+	while (true)
+	{
+		if (node->cost->getAdditionalInformation() == information)
+		{
+			return node->cost;
+		}
+		else if (node->cost->getAdditionalInformation() < information)
+		{
+			if (node->right)
+			{
+				node = node->right;
+			}
+			else
+			{
+				return {};
+			}
+		}
+		else
+		{
+			if (node->left)
+			{
+				node = node->left;
+			}
+			else
+			{
+				return {};
+			}
+		}
+	}
 }
