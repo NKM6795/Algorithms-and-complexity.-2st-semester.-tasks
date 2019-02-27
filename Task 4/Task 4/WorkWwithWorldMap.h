@@ -11,6 +11,7 @@ class WorkWwithWorldMap
 
 	void getInformationFromTheLine(string &line, string &result, int &position);
 	void getInformationFromTheLine(string &line, long &result, int &position);
+	void getInformationFromTheLine(string &line, float &result, int &position);
 
 public:
 	WorkWwithWorldMap();

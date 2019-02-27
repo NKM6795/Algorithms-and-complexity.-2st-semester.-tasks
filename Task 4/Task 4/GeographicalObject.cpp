@@ -16,6 +16,16 @@ GeographicalObject::GeographicalObject(string name, long additionalInformation, 
 	setOwnedObjects(ownedObjects);
 }
 
+GeographicalObject::GeographicalObject(string name, long additionalInformation, float probabilityOfHitting, float intermediateProbability) : name(name), additionalInformation(additionalInformation), probabilityOfHitting(probabilityOfHitting), intermediateProbability(intermediateProbability)
+{
+
+}
+
+GeographicalObject::GeographicalObject(string name, long additionalInformation, float probabilityOfHitting, float intermediateProbability, vector<shared_ptr<GeographicalObject> > &ownedObjects) : name(name), additionalInformation(additionalInformation), probabilityOfHitting(probabilityOfHitting), intermediateProbability(intermediateProbability)
+{
+	setOwnedObjects(ownedObjects);
+}
+
 
 void GeographicalObject::setName(string name)
 {

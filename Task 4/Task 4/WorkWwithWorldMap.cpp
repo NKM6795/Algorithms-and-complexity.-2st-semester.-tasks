@@ -50,6 +50,40 @@ void WorkWwithWorldMap::getInformationFromTheLine(string &line, long &result, in
 	++position;
 }
 
+void WorkWwithWorldMap::getInformationFromTheLine(string &line, float &result, int &position)
+{
+	bool canRead = false;
+
+	bool isInteger = true;
+	float divisor = 0.1f;
+
+	for (; position < int(line.size()) && line[position] != '}'; ++position)
+	{
+		if (!canRead && line[position] == '{')
+		{
+			canRead = true;
+		}
+		else if (canRead)
+		{
+			if (line[position] == '.')
+			{
+				isInteger = false;
+			}
+			else
+			{
+				result = result * 10.f + float(line[position] - '0');
+			}
+
+			if (!isInteger)
+			{
+				divisor *= 10;
+			}
+		}
+	}
+	result /= divisor;
+	++position;
+}
+
 
 void WorkWwithWorldMap::createWorldMap(string name)
 {
@@ -62,6 +96,7 @@ void WorkWwithWorldMap::createWorldMap(string name)
 	
 	string oldCountry;
 	long oldCountryPopulation;
+	float oldCountryProbabilityOfHitting = 0.f, oldCountryIntermediateProbability = 0.f;
 	bool firstPass = true;
 
 	while (getline(fileInput, line))
@@ -70,11 +105,17 @@ void WorkWwithWorldMap::createWorldMap(string name)
 		
 		string country, city;
 		long countryPopulation = 0, cityPopulation = 0;
+		float countryProbabilityOfHitting = 0.f, countryIntermediateProbability = 0.f,
+			cityProbabilityOfHitting = 0.f, cityIntermediateProbability = 0.f;
 
 		getInformationFromTheLine(line, country, i);
 		getInformationFromTheLine(line, countryPopulation, i);
+		getInformationFromTheLine(line, countryIntermediateProbability, i);
+		getInformationFromTheLine(line, countryProbabilityOfHitting, i);
 		getInformationFromTheLine(line, city, i);
 		getInformationFromTheLine(line, cityPopulation, i);
+		getInformationFromTheLine(line, cityIntermediateProbability, i);
+		getInformationFromTheLine(line, cityProbabilityOfHitting, i);
 
 
 		if (firstPass || oldCountry == country)
@@ -83,7 +124,7 @@ void WorkWwithWorldMap::createWorldMap(string name)
 		}
 		else if (oldCountry != country)
 		{
-			countries.push_back(shared_ptr<GeographicalObject>(new GeographicalObject(oldCountry, oldCountryPopulation, cities)));
+			countries.push_back(shared_ptr<GeographicalObject>(new GeographicalObject(oldCountry, oldCountryPopulation, oldCountryProbabilityOfHitting, oldCountryIntermediateProbability, cities)));
 
 			cities.clear();
 		}
@@ -91,7 +132,7 @@ void WorkWwithWorldMap::createWorldMap(string name)
 		oldCountry = country;
 		oldCountryPopulation = countryPopulation;
 		
-		cities.push_back(shared_ptr<GeographicalObject>(new GeographicalObject(city, cityPopulation)));
+		cities.push_back(shared_ptr<GeographicalObject>(new GeographicalObject(city, cityPopulation, cityProbabilityOfHitting, cityIntermediateProbability)));
 	}
 
 	countries.push_back(shared_ptr<GeographicalObject>(new GeographicalObject(oldCountry, oldCountryPopulation, cities)));
