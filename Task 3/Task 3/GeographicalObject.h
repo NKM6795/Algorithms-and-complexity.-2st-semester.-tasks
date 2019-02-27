@@ -19,7 +19,7 @@ class GeographicalObject
 	long additionalInformation;
 
 	Graph ownedObjects;
-	
+
 public:
 	GeographicalObject();
 	GeographicalObject(string name, long additionalInformation);

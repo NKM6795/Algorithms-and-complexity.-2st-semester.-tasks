@@ -257,6 +257,26 @@ void Graph::zigZag(shared_ptr<Node> node)
 }
 
 
+void Graph::coutTree(shared_ptr<Node> node)
+{
+	if (node)
+	{
+		cout << "{ ";
+		coutTree(node->left);
+		
+		cout << " | ";
+		cout << node->cost->getAdditionalInformation() << " | ";
+
+		coutTree(node->right);
+		cout << " }";
+	}
+	else
+	{
+		cout << "{||}";
+	}
+}
+
+
 Graph::Graph()
 {
 
@@ -306,4 +326,12 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 			}
 		}
 	}
+}
+
+
+void Graph::coutTree()
+{
+	cout << '\n';
+	coutTree(root);
+	cout << '\n';
 }

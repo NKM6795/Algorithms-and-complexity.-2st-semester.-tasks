@@ -45,6 +45,7 @@ class Graph
 	void zigZig(shared_ptr<Node> node);
 	void zigZag(shared_ptr<Node> node);
 
+	void coutTree(shared_ptr<Node> node);
 
 public:
 	Graph();
@@ -52,4 +53,6 @@ public:
 	void addVertex(shared_ptr<GeographicalObject> cost);
 
 	shared_ptr<GeographicalObject> getVertex(long information);
+
+	void coutTree();
 };
