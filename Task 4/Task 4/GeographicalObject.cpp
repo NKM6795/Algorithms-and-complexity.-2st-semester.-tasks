@@ -16,12 +16,12 @@ GeographicalObject::GeographicalObject(string name, long additionalInformation, 
 	setOwnedObjects(ownedObjects);
 }
 
-GeographicalObject::GeographicalObject(string name, long additionalInformation, float probabilityOfHitting, float intermediateProbability) : name(name), additionalInformation(additionalInformation), probabilityOfHitting(probabilityOfHitting), intermediateProbability(intermediateProbability)
+GeographicalObject::GeographicalObject(string name, long additionalInformation, float probability) : name(name), additionalInformation(additionalInformation), probability(probability)
 {
 
 }
 
-GeographicalObject::GeographicalObject(string name, long additionalInformation, float probabilityOfHitting, float intermediateProbability, vector<shared_ptr<GeographicalObject> > &ownedObjects) : name(name), additionalInformation(additionalInformation), probabilityOfHitting(probabilityOfHitting), intermediateProbability(intermediateProbability)
+GeographicalObject::GeographicalObject(string name, long additionalInformation, float probability, vector<shared_ptr<GeographicalObject> > &ownedObjects) : name(name), additionalInformation(additionalInformation), probability(probability)
 {
 	setOwnedObjects(ownedObjects);
 }

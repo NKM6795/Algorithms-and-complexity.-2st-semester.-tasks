@@ -17,8 +17,7 @@ class GeographicalObject
 {
 	string name;
 	long additionalInformation;
-	float probabilityOfHitting,
-		intermediateProbability;
+	float probability;
 
 	Graph ownedObjects;
 	
@@ -26,8 +25,8 @@ public:
 	GeographicalObject();
 	GeographicalObject(string name, long additionalInformation);
 	GeographicalObject(string name, long additionalInformation, vector<shared_ptr<GeographicalObject> > &ownedObjects);
-	GeographicalObject(string name, long additionalInformation, float probabilityOfHitting, float intermediateProbability);
-	GeographicalObject(string name, long additionalInformation, float probabilityOfHitting, float intermediateProbability, vector<shared_ptr<GeographicalObject> > &ownedObjects);
+	GeographicalObject(string name, long additionalInformation, float probability);
+	GeographicalObject(string name, long additionalInformation, float probability, vector<shared_ptr<GeographicalObject> > &ownedObjects);
 
 	void setName(string name);
 	void setName(string &name);
