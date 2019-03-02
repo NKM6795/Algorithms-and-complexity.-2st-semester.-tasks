@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 
 using namespace std;
@@ -31,25 +32,15 @@ class Graph
 
 	shared_ptr<Node> root;
 
-	void insert(shared_ptr<Node> parent, shared_ptr<Node> node);
+	void downHeap(vector<shared_ptr<GeographicalObject> > &first, long k, long number);
+	void heapSort(vector<shared_ptr<GeographicalObject> > &first);
 
-	shared_ptr<Node> getGrandparent(shared_ptr<Node> node);
-	shared_ptr<Node> getUncle(shared_ptr<Node> node);
-
-	void rotateLeft(shared_ptr<Node> node);
-	void rotateRight(shared_ptr<Node> node);
-
-	void splay(shared_ptr<Node> node);
-
-	void zig(shared_ptr<Node> node);
-	void zigZig(shared_ptr<Node> node);
-	void zigZag(shared_ptr<Node> node);
-
+	void creation(vector<vector<int> > &roots, shared_ptr<Node> parent, int left, int right, vector<shared_ptr<GeographicalObject> > &costs);
 
 public:
 	Graph();
 
-	void addVertex(shared_ptr<GeographicalObject> cost);
+	void addVertexes(vector<shared_ptr<GeographicalObject> > &costs);
 
 	shared_ptr<GeographicalObject> getVertex(long information);
 };

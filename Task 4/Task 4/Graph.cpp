@@ -23,238 +23,81 @@ Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent, 
 }
 
 
-void Graph::insert(shared_ptr<Node> parent, shared_ptr<Node> node)
+void Graph::downHeap(vector<shared_ptr<GeographicalObject> > &first, long k, long number)
 {
-	while (parent)
+	long child;
+	shared_ptr<GeographicalObject> newElement = first[k];
+
+	while (k <= number / 2)
 	{
-		if (node->cost->getAdditionalInformation() >= parent->cost->getAdditionalInformation())
+		child = 2 * k;
+
+		if (child < number && first[child]->getAdditionalInformation() < first[child + 1]->getAdditionalInformation())
 		{
-			if (parent->right)
-			{
-				parent = parent->right;
-			}
-			else
-			{
-				node->parent = parent;
-				parent->right = node;
-				return;
-			}
+			++child;
+		}
+		if (newElement->getAdditionalInformation() >= first[child]->getAdditionalInformation())
+		{
+			break;
+		}
+
+		first[k] = first[child];
+		k = child;
+	}
+
+	first[k] = newElement;
+}
+
+void Graph::heapSort(vector<shared_ptr<GeographicalObject> > &first)
+{
+	for (int i = int(first.size()) / 2; i >= 0; --i)
+	{
+		downHeap(first, i, int(first.size()) - 1);
+	}
+
+	for (int i = int(first.size()) - 1; i > 0; --i)
+	{
+		swap(first[i], first[0]);
+
+		downHeap(first, 0, i - 1);
+	}
+}
+
+
+void Graph::creation(vector<vector<int> > &roots, shared_ptr<Node> parent, int left, int right, vector<shared_ptr<GeographicalObject> > &costs)
+{
+	int index = roots[left][right];
+
+	shared_ptr<Node> node = make_shared<Node>(costs[index]);
+
+	if (parent)
+	{
+		if (parent->cost->getAdditionalInformation() <= node->cost->getAdditionalInformation())
+		{
+			parent->right = node;
 		}
 		else
 		{
-			if (parent->left)
-			{
-				parent = parent->left;
-			}
-			else
-			{
-				node->parent = parent;
-				parent->left = node;
-				return;
-			}
+			parent->left = node;
 		}
-	}
-}
-
-
-shared_ptr<Graph::Node> Graph::getGrandparent(shared_ptr<Node> node)
-{
-	if (node->parent && node->parent->parent)
-	{
-		return node->parent->parent;
+		node->parent = parent;
 	}
 	else
-	{
-		return {};
-	}
-}
-
-shared_ptr<Graph::Node> Graph::getUncle(shared_ptr<Node> node)
-{
-	if (node->parent && node->parent->parent)
-	{
-		if (node->parent->parent->left && node->parent->parent->left == node->parent)
-		{
-			return node->parent->parent->right;
-		}
-		else
-		{
-			return node->parent->parent->left;
-		}
-	}
-	else
-	{
-		return {};
-	}
-}
-
-
-void Graph::rotateLeft(shared_ptr<Node> node)
-{
-	shared_ptr<Node> current = node->right;
-
-	current->parent = node->parent;
-	if (node->parent)
-	{
-		if (node->parent->left == node)
-		{
-			node->parent->left = current;
-		}
-		else
-		{
-			node->parent->right = current;
-		}
-	}
-	else
-	{
-		root = current;
-	}
-
-	node->right = current->left;
-	if (current->left)
-	{
-		current->left->parent = node;
-	}
-
-	node->parent = current;
-	current->left = node;
-}
-
-void Graph::rotateRight(shared_ptr<Node> node)
-{
-	shared_ptr<Node> current = node->left;
-
-	current->parent = node->parent;
-	if (node->parent)
-	{
-		if (node->parent->left == node)
-		{
-			node->parent->left = current;
-		}
-		else
-		{
-			node->parent->right = current;
-		}
-	}
-	else
-	{
-		root = current;
-	}
-
-	node->left = current->right;
-	if (current->right)
-	{
-		current->right->parent = node;
-	}
-
-	node->parent = current;
-	current->right = node;
-}
-
-
-void Graph::splay(shared_ptr<Node> node)
-{
-	if (!node->parent)
 	{
 		root = node;
 	}
-	else
+
+	if (index - left > 0)
 	{
-		while (true)
-		{
-			if (node == root)
-			{
-				return;
-			}
-			shared_ptr<Node> parent = node->parent;
+		creation(roots, node, left, index - 1, costs);
+	}
 
-			if (parent == root)
-			{
-				zig(node);
-
-				return;
-			}
-
-			zigZig(node);
-
-			zigZag(node);
-		}
+	if (right - index > 0)
+	{
+		creation(roots, node, index + 1, right, costs);
 	}
 }
 
-
-void Graph::zig(shared_ptr<Node> node)
-{
-	if (node == node->parent->left)
-	{
-		rotateRight(node->parent);
-	}
-	else
-	{
-		rotateLeft(node->parent);
-	}
-
-	root = node;
-}
-
-void Graph::zigZig(shared_ptr<Node> node)
-{
-	shared_ptr<Node> grandparent = getGrandparent(node);
-
-	if (node->parent && grandparent)
-	{
-		if (node == node->parent->left && node->parent == grandparent->left)
-		{
-			rotateRight(grandparent);
-			rotateRight(node->parent);
-
-			if (grandparent == root)
-			{
-				root = node;
-			}
-		}
-		else if (node == node->parent->right && node->parent == grandparent->right)
-		{
-			rotateLeft(grandparent);
-			rotateLeft(node->parent);
-
-			if (grandparent == root)
-			{
-				root = node;
-			}
-		}
-
-	}
-}
-
-void Graph::zigZag(shared_ptr<Node> node)
-{
-	shared_ptr<Node> grandparent = getGrandparent(node);
-
-	if (node->parent && grandparent)
-	{
-		if (node == node->parent->left && node->parent == grandparent->right)
-		{
-			rotateRight(node->parent);
-			rotateLeft(grandparent);
-
-			if (grandparent == root)
-			{
-				root = node;
-			}
-		}
-		else if (node == node->parent->right && node->parent == grandparent->left)
-		{
-			rotateLeft(node->parent);
-			rotateRight(grandparent);
-
-			if (grandparent == root)
-			{
-				root = node;
-			}
-		}
-	}
-}
 
 
 Graph::Graph()
@@ -263,13 +106,72 @@ Graph::Graph()
 }
 
 
-void Graph::addVertex(shared_ptr<GeographicalObject> cost)
+void Graph::addVertexes(vector<shared_ptr<GeographicalObject> > &costs)
 {
-	shared_ptr<Node> node = make_shared<Node>(cost);
-	
-	insert(root, node);
+	int number = int(costs.size());
 
-	splay(node);
+	if (costs.size() == 1)
+	{
+		costs[0]->setProbability(1.f);
+	}
+	else
+	{
+		float sum = 0.f;
+
+		for (int i = 0; i < number - 1; ++i)
+		{
+			sum += costs[i]->getProbability();
+		}
+
+		costs[number - 1]->setProbability(1.f - sum);
+	}
+
+	heapSort(costs);
+
+	vector<vector<float> > expectation(number + 2, vector<float>(number + 1, 10000000.f));
+	vector<vector<float> > partialSums(number + 2, vector<float>(number + 1));
+	vector<vector<int> > roots(number + 1, vector<int>(number + 1, -1));
+
+	for (int i = 0; i < number + 1; ++i)
+	{
+		expectation[i][i] = 0.f;
+		partialSums[i][i] = 0.f;
+	}
+
+	for (int l = 1; l <= number; ++l)
+	{
+		for (int i = 0; i < number - l + 1; ++i)
+		{
+			int j = i + l;
+
+			partialSums[i][j] = partialSums[i][j - 1] + costs[j-1]->getProbability();
+
+			int left, right;
+			if (l == 1)
+			{
+				left = i;
+				right = j;
+			}
+			else
+			{
+				left = roots[i][j - 2];
+				right = roots[i + 1][j - 1];
+			}
+
+			for (int k = left; k <= right; ++k)
+			{
+				float value = expectation[i][k] + expectation[k + 1][j] + partialSums[i][j];
+
+				if (value < expectation[i][j])
+				{
+					expectation[i][j] = value;
+					roots[i][j - 1] = k;
+				}
+			}
+		}
+	}
+	
+	creation(roots, {}, 0, number - 1, costs);
 }
 
 

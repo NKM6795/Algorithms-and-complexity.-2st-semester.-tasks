@@ -32,11 +32,6 @@ void GeographicalObject::setName(string name)
 	this->name = name;
 }
 
-void GeographicalObject::setName(string &name)
-{
-	this->name = name;
-}
-
 string GeographicalObject::getName()
 {
 	return name;
@@ -48,23 +43,26 @@ void GeographicalObject::setAdditionalInformation(long additionalInformation)
 	this->additionalInformation = additionalInformation;
 }
 
-void GeographicalObject::setAdditionalInformation(long &additionalInformation)
-{
-	this->additionalInformation = additionalInformation;
-}
-
 long GeographicalObject::getAdditionalInformation()
 {
 	return additionalInformation;
 }
 
 
+void GeographicalObject::setProbability(float probability)
+{
+	this->probability = probability;
+}
+
+float GeographicalObject::getProbability()
+{
+	return probability;
+}
+
+
 void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects)
 {
-	for (int i = 0; i < int(ownedObjects.size()); ++i)
-	{
-		this->ownedObjects.addVertex(ownedObjects[i]);
-	}
+	this->ownedObjects.addVertexes(ownedObjects);
 }
 
 

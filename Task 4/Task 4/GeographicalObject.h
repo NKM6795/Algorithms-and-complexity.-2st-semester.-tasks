@@ -29,12 +29,13 @@ public:
 	GeographicalObject(string name, long additionalInformation, float probability, vector<shared_ptr<GeographicalObject> > &ownedObjects);
 
 	void setName(string name);
-	void setName(string &name);
 	string getName();
 
 	void setAdditionalInformation(long additionalInformation);
-	void setAdditionalInformation(long &additionalInformation);
 	long getAdditionalInformation();
+
+	void setProbability(float probability);
+	float getProbability();
 
 	void setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects);
 
