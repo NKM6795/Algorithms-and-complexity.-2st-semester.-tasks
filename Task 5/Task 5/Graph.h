@@ -23,8 +23,6 @@ class Graph
 		//false - red
 		bool color;
 
-		int dimension;
-
 		shared_ptr<Node> left,
 			right,
 			parent;
@@ -33,13 +31,15 @@ class Graph
 		Node(shared_ptr<GeographicalObject> cost);
 		Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent);
 		Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent, shared_ptr<Node> left, shared_ptr<Node> right);
+		Node(shared_ptr<Node> node);
 	};
+
+	vector<shared_ptr<Node> > versions;
 
 	shared_ptr<Node> root;
 
-	void insert(shared_ptr<Node> parent, shared_ptr<Node> node);
 
-	void smallRecount(shared_ptr<Node> node);
+	void insert(shared_ptr<Node> parent, shared_ptr<Node> node);
 
 	shared_ptr<Node> getGrandparent(shared_ptr<Node> node);
 	shared_ptr<Node> getUncle(shared_ptr<Node> node);
@@ -53,53 +53,18 @@ class Graph
 	void variant4(shared_ptr<Node> node);
 	void variant5(shared_ptr<Node> node);
 
+	void makeVersion(shared_ptr<Node> root, shared_ptr<Node> node);
+
+	void coutTree(shared_ptr<Node> node);
+
 public:
 	Graph();
 
 	void addVertex(shared_ptr<GeographicalObject> cost);
 
-	shared_ptr<GeographicalObject> operator [] (int i)
-	{
-		if (i <= 0)
-		{
-			i = 0;
-		}
+	shared_ptr<GeographicalObject> getVertex(long information);
+	shared_ptr<GeographicalObject> getVertex(long information, int version);
 
-		shared_ptr<Node> node = root;
-
-		bool find = false;
-
-		while (!find)
-		{
-			int value;
-			if (node->left)
-			{
-				value = node->left->dimension;
-			}
-			else
-			{
-				value = 0;
-			}
-
-			if (i == value)
-			{
-				find = true;
-			}
-			else if (i < value)
-			{
-				node = node->left;
-			}
-			else if (node->right)
-			{
-				i -= value + 1;
-				node = node->right;
-			}
-			else
-			{
-				find = true;
-			}
-		}
-
-		return node->cost;
-	}
+	void coutTree();
+	void coutTree(int version);
 };

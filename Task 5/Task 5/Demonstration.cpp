@@ -5,21 +5,41 @@ void demonstration(string fileName)
 {
 	WorkWwithWorldMap workWwithWorldMap(fileName);
 
-	long position;
-	
-	cin >> position;
+	long information;
+
+	cin >> information;
 
 	shared_ptr<GeographicalObject> worldMap = workWwithWorldMap.getWorldMap();
 
-	shared_ptr<GeographicalObject> country = worldMap->getOwnedObject(position);
+	shared_ptr<GeographicalObject> country = worldMap->getOwnedObject(information);
 
-	cout << country->getName() << ' ' << country->getAdditionalInformation() << '\n';
+	if (country)
+	{
+		cout << country->getName() << ' ' << country->getAdditionalInformation() << '\n';
+	}
+	else
+	{
+		cout << "Error\n";
 
-	cin >> position;
+		cin.get();
+		cin.get();
+		cin.get();
 
-	shared_ptr<GeographicalObject> city = country->getOwnedObject(position);
+		return;
+	}
 
-	cout << city->getName() << ' ' << city->getAdditionalInformation() << '\n';
+	cin >> information;
+
+	shared_ptr<GeographicalObject> city = country->getOwnedObject(information);
+
+	if (city)
+	{
+		cout << city->getName() << ' ' << city->getAdditionalInformation() << '\n';
+	}
+	else
+	{
+		cout << "Error\n";
+	}
 
 	cin.get();
 	cin.get();

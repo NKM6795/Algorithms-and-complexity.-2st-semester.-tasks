@@ -2,24 +2,30 @@
 #include "GeographicalObject.h"
 
 
-Graph::Node::Node() : color(false), dimension(1)
+Graph::Node::Node() : color(false)
 {
 
 }
 
-Graph::Node::Node(shared_ptr<GeographicalObject> cost) : color(false), dimension(1), cost(cost)
+Graph::Node::Node(shared_ptr<GeographicalObject> cost) : color(false), cost(cost)
 {
 
 }
 
-Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent) : color(false), dimension(1), cost(cost), parent(parent)
+Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent) : color(false), cost(cost), parent(parent)
 {
 
 }
 
-Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent, shared_ptr<Node> left, shared_ptr<Node> right) : color(false), dimension(1), cost(cost), parent(parent), left(left), right(right)
+Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent, shared_ptr<Node> left, shared_ptr<Node> right) : color(false), cost(cost), parent(parent), left(left), right(right)
 {
 
+}
+
+Graph::Node::Node(shared_ptr<Node> node)
+{
+	this->color = node->color;
+	this->cost = node->cost;
 }
 
 
@@ -53,18 +59,6 @@ void Graph::insert(shared_ptr<Node> parent, shared_ptr<Node> node)
 				return;
 			}
 		}
-	}
-}
-
-
-void Graph::smallRecount(shared_ptr<Node> node)
-{
-	shared_ptr<Node> current = node;
-
-	while (current->parent)
-	{
-		current = current->parent;
-		++current->dimension;
 	}
 }
 
@@ -105,19 +99,6 @@ void Graph::rotateLeft(shared_ptr<Node> node)
 {
 	shared_ptr<Node> current = node->right;
 
-	//Recount
-	{
-		int tempDimention = node->dimension;
-
-		if (current->right)
-		{
-			node->dimension -= current->right->dimension;
-		}
-		node->dimension -= 1;
-
-		current->dimension = tempDimention;
-	}
-
 	current->parent = node->parent;
 	if (node->parent)
 	{
@@ -148,19 +129,6 @@ void Graph::rotateLeft(shared_ptr<Node> node)
 void Graph::rotateRight(shared_ptr<Node> node)
 {
 	shared_ptr<Node> current = node->left;
-
-	//Recount
-	{
-		int tempDimention = node->dimension;
-
-		if (current->left)
-		{
-			node->dimension -= current->left->dimension;
-		}
-		node->dimension -= 1;
-
-		current->dimension = tempDimention;
-	}
 
 	current->parent = node->parent;
 	if (node->parent)
@@ -272,6 +240,94 @@ void Graph::variant5(shared_ptr<Node> node)
 }
 
 
+void Graph::makeVersion(shared_ptr<Node> root, shared_ptr<Node> node)
+{
+	if (node == root)
+	{
+		return;
+	}
+	shared_ptr<Node> parent = node->parent;
+
+	shared_ptr<Node> newParent = make_shared<Node>(parent);
+
+	{
+		if (parent->left)
+		{
+			parent->left->parent = newParent;
+			newParent->left = parent->left;
+		}
+		if (parent->right)
+		{
+			parent->right->parent = newParent;
+			newParent->right = parent->right;
+		}
+	
+		if (node == parent->left)
+		{
+			parent->left = {};
+		}
+		else if (node == parent->right)
+		{
+			parent->right = {};
+		}
+	}
+
+	while (parent != root)
+	{
+		shared_ptr<Node> grandparent = parent->parent;
+		shared_ptr<Node> newGrandparent = make_shared<Node>(grandparent);
+		
+		if (grandparent->left == parent)
+		{
+			newGrandparent->left = newParent;
+			
+			if (grandparent->right)
+			{
+				newGrandparent->right = grandparent->right;
+				newGrandparent->right->parent = newGrandparent;
+			}
+		}
+		else
+		{
+			newGrandparent->right = newParent;
+
+			if (grandparent->left)
+			{
+				newGrandparent->left = grandparent->left;
+				newGrandparent->left->parent = newGrandparent;
+			}
+		}
+		newParent->parent = newGrandparent;
+
+		parent = parent->parent;
+		newParent = newParent->parent;
+	}
+
+	this->root = newParent;
+	return;
+}
+
+
+void Graph::coutTree(shared_ptr<Node> node)
+{
+	if (node)
+	{
+		cout << "{ ";
+		coutTree(node->left);
+
+		cout << " | ";
+		cout << node->cost->getAdditionalInformation() << " | ";
+
+		coutTree(node->right);
+		cout << " }";
+	}
+	else
+	{
+		cout << "{}";
+	}
+}
+
+
 Graph::Graph()
 {
 
@@ -284,7 +340,78 @@ void Graph::addVertex(shared_ptr<GeographicalObject> cost)
 	
 	insert(root, node);
 
-	smallRecount(node);
+	if (!node->parent)
+	{
+		root = node;
+		root->color = true;
+	}
+	//variant1(node);
 
-	variant1(node);
+	makeVersion(root, node);
+
+	versions.push_back(root);
+}
+
+
+shared_ptr<GeographicalObject> Graph::getVertex(long information)
+{
+	return getVertex(information, int(versions.size()) - 1);
+}
+
+shared_ptr<GeographicalObject> Graph::getVertex(long information, int version)
+{
+	if (version < 0 || version >= int(versions.size()))
+	{
+		return {};
+	}
+
+	shared_ptr<Node> node = versions[version];
+
+	while (true)
+	{
+		if (node->cost->getAdditionalInformation() == information)
+		{
+			return node->cost;
+		}
+		else if (node->cost->getAdditionalInformation() < information)
+		{
+			if (node->right)
+			{
+				node = node->right;
+			}
+			else
+			{
+				return {};
+			}
+		}
+		else
+		{
+			if (node->left)
+			{
+				node = node->left;
+			}
+			else
+			{
+				return {};
+			}
+		}
+	}
+}
+
+
+void Graph::coutTree()
+{
+	coutTree(int(versions.size()) - 1);
+}
+
+void Graph::coutTree(int version)
+{
+	if (version < 0 || version >= int(versions.size()))
+	{
+		return;
+	}
+
+	cout << '\n';
+	coutTree(versions[version]);
+	cout << '\n';
 }
