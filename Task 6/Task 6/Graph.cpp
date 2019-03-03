@@ -4,334 +4,184 @@
 
 Graph::Node::Node()
 {
-
+	leaf = false;
+	keyNumber = 0;
 }
 
-Graph::Node::Node(shared_ptr<GeographicalObject> cost) : cost(cost)
+Graph::Node::Node(int dimension)
 {
-
-}
-
-Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent) : cost(cost), parent(parent)
-{
-
-}
-
-Graph::Node::Node(shared_ptr<GeographicalObject> cost, shared_ptr<Node> parent, shared_ptr<Node> left, shared_ptr<Node> right) : cost(cost), parent(parent), left(left), right(right)
-{
-
+	leaf = false;
+	keyNumber = 0;
+	key.resize(2 * dimension);
+	cost.resize(2 * dimension);
+	child.resize(10000);
 }
 
 
-void Graph::insert(shared_ptr<Node> parent, shared_ptr<Node> node)
+shared_ptr<Graph::Node> Graph::getLeaf(long key)
 {
-	while (parent)
+	shared_ptr<Node> node = root;
+
+	while (!node->leaf)
 	{
-		if (node->cost->getAdditionalInformation() >= parent->cost->getAdditionalInformation())
+		for (int i = 0; i <= node->keyNumber; ++i)
 		{
-			if (parent->right)
+			if (i == node->keyNumber || key < node->key[i])
 			{
-				parent = parent->right;
-			}
-			else
-			{
-				node->parent = parent;
-				parent->right = node;
-				return;
-			}
-		}
-		else
-		{
-			if (parent->left)
-			{
-				parent = parent->left;
-			}
-			else
-			{
-				node->parent = parent;
-				parent->left = node;
-				return;
+				node = node->child[i];
+				break;
 			}
 		}
 	}
+
+	return node;
 }
 
 
-shared_ptr<Graph::Node> Graph::getGrandparent(shared_ptr<Node> node)
+void Graph::split(shared_ptr<Node> node)
 {
-	if (node->parent && node->parent->parent)
+	shared_ptr<Node> newNode = make_shared<Node>(dimension);
+
+	if (node->right)
 	{
-		return node->parent->parent;
+		newNode->right = node->right;
+		node->right->left = newNode;
+	}
+
+	node->right = newNode;
+	newNode->left = node;
+
+	
+	long middleKey = node->key[dimension];
+	newNode->keyNumber = dimension - 1;
+	node->keyNumber = dimension;
+
+	for (int i = 0; i <= newNode->keyNumber - 1; ++i)
+	{
+		newNode->key[i] = node->key[i + dimension + 1];
+		newNode->cost[i] = node->cost[i + dimension + 1];
+		newNode->child[i] = node->child[i + dimension + 1];
+	}
+	newNode->child[newNode->keyNumber] = node->child[2 * dimension];
+
+	if (node->leaf)
+	{
+		++newNode->keyNumber;
+		newNode->leaf = true;
+
+		for (int i = newNode->keyNumber - 1; i > 0; --i)
+		{
+			newNode->key[i] = node->key[i - 1];
+			newNode->cost[i] = node->cost[i - 1];
+		}
+		newNode->key[0] = node->key[dimension];
+		newNode->cost[0] = node->cost[dimension];
+	}
+
+	if (node == root)
+	{
+		root = make_shared<Node>(dimension);
+		root->key[0] = middleKey;
+		root->child[0] = node;
+		root->child[1] = newNode;
+		root->keyNumber = 1;
+		node->parent = root;
+		newNode->parent = root;
 	}
 	else
 	{
-		return {};
-	}
-}
+		newNode->parent = node->parent;
+		shared_ptr<Node> parent = node->parent;
 
-shared_ptr<Graph::Node> Graph::getUncle(shared_ptr<Node> node)
-{
-	if (node->parent && node->parent->parent)
-	{
-		if (node->parent->parent->left && node->parent->parent->left == node->parent)
+		int position = 0;
+
+		while (position < parent->keyNumber && parent->key[position] < middleKey)
 		{
-			return node->parent->parent->right;
+			++position;
 		}
-		else
+
+		for (int i = parent->keyNumber; i > position; --i)
 		{
-			return node->parent->parent->left;
+			parent->key[i] = parent->key[i - 1];
 		}
-	}
-	else
-	{
-		return {};
-	}
-}
-
-
-void Graph::rotateLeft(shared_ptr<Node> node)
-{
-	shared_ptr<Node> current = node->right;
-
-	current->parent = node->parent;
-	if (node->parent)
-	{
-		if (node->parent->left == node)
+		for (int i = parent->keyNumber + 1; i > position + 1; --i)
 		{
-			node->parent->left = current;
+			parent->child[i] = parent->child[i - 1];
 		}
-		else
+
+		parent->key[position] = middleKey;
+		parent->child[position + 1] = newNode;
+
+		++parent->keyNumber;
+
+		if (parent->keyNumber == 2 * dimension)
 		{
-			node->parent->right = current;
-		}
-	}
-	else
-	{
-		root = current;
-	}
-
-	node->right = current->left;
-	if (current->left)
-	{
-		current->left->parent = node;
-	}
-
-	node->parent = current;
-	current->left = node;
-}
-
-void Graph::rotateRight(shared_ptr<Node> node)
-{
-	shared_ptr<Node> current = node->left;
-
-	current->parent = node->parent;
-	if (node->parent)
-	{
-		if (node->parent->left == node)
-		{
-			node->parent->left = current;
-		}
-		else
-		{
-			node->parent->right = current;
-		}
-	}
-	else
-	{
-		root = current;
-	}
-
-	node->left = current->right;
-	if (current->right)
-	{
-		current->right->parent = node;
-	}
-
-	node->parent = current;
-	current->right = node;
-}
-
-
-void Graph::splay(shared_ptr<Node> node)
-{
-	if (!node->parent)
-	{
-		root = node;
-	}
-	else
-	{
-		while (true)
-		{
-			if (node == root)
-			{
-				return;
-			}
-			shared_ptr<Node> parent = node->parent;
-
-			if (parent == root)
-			{
-				zig(node);
-
-				return;
-			}
-
-			zigZig(node);
-
-			zigZag(node);
+			split(parent);
 		}
 	}
 }
 
 
-void Graph::zig(shared_ptr<Node> node)
+void Graph::insert(shared_ptr<GeographicalObject> cost)
 {
-	if (node == node->parent->left)
+	if (!root)
 	{
-		rotateRight(node->parent);
-	}
-	else
-	{
-		rotateLeft(node->parent);
+		root = make_shared<Node>(dimension);
+		root->leaf = true;
 	}
 
-	root = node;
-}
+	long key = cost->getAdditionalInformation();
 
-void Graph::zigZig(shared_ptr<Node> node)
-{
-	shared_ptr<Node> grandparent = getGrandparent(node);
+	shared_ptr<Node> leaf = getLeaf(key);
 
-	if (node->parent && grandparent)
+	int position = 0;
+
+	while (position < leaf->keyNumber && leaf->key[position] < key)
 	{
-		if (node == node->parent->left && node->parent == grandparent->left)
-		{
-			rotateRight(grandparent);
-			rotateRight(node->parent);
-
-			if (grandparent == root)
-			{
-				root = node;
-			}
-		}
-		else if (node == node->parent->right && node->parent == grandparent->right)
-		{
-			rotateLeft(grandparent);
-			rotateLeft(node->parent);
-
-			if (grandparent == root)
-			{
-				root = node;
-			}
-		}
-
+		++position;
 	}
-}
-
-void Graph::zigZag(shared_ptr<Node> node)
-{
-	shared_ptr<Node> grandparent = getGrandparent(node);
-
-	if (node->parent && grandparent)
+	
+	for (int i = leaf->keyNumber; i > position; --i)
 	{
-		if (node == node->parent->left && node->parent == grandparent->right)
-		{
-			rotateRight(node->parent);
-			rotateLeft(grandparent);
-
-			if (grandparent == root)
-			{
-				root = node;
-			}
-		}
-		else if (node == node->parent->right && node->parent == grandparent->left)
-		{
-			rotateLeft(node->parent);
-			rotateRight(grandparent);
-
-			if (grandparent == root)
-			{
-				root = node;
-			}
-		}
+		leaf->key[i] = leaf->key[i - 1];
+		leaf->cost[i] = leaf->cost[i - 1];
 	}
-}
 
+	leaf->key[position] = key;
+	leaf->cost[position] = cost;
 
-void Graph::coutTree(shared_ptr<Node> node)
-{
-	if (node)
+	++leaf->keyNumber;
+
+	if (leaf->keyNumber == 2 * dimension)
 	{
-		cout << "{ ";
-		coutTree(node->left);
-		
-		cout << " | ";
-		cout << node->cost->getAdditionalInformation() << " | ";
-
-		coutTree(node->right);
-		cout << " }";
-	}
-	else
-	{
-		cout << "{||}";
+		split(leaf);
 	}
 }
 
 
 Graph::Graph()
 {
-
+	dimension = 5;
 }
 
 
 void Graph::addVertex(shared_ptr<GeographicalObject> cost)
 {
-	shared_ptr<Node> node = make_shared<Node>(cost);
-	
-	insert(root, node);
-
-	splay(node);
+	insert(cost);
 }
 
 
 shared_ptr<GeographicalObject> Graph::getVertex(long information)
 {
-	shared_ptr<Node> node = root;
+	shared_ptr<Node> node = getLeaf(information);
 
-	while (true)
+	for (int i = 0; i < node->keyNumber; ++i)
 	{
-		if (node->cost->getAdditionalInformation() == information)
+		if (information == node->key[i])
 		{
-			return node->cost;
-		}
-		else if (node->cost->getAdditionalInformation() < information)
-		{
-			if (node->right)
-			{
-				node = node->right;
-			}
-			else
-			{
-				return {};
-			}
-		}
-		else
-		{
-			if (node->left)
-			{
-				node = node->left;
-			}
-			else
-			{
-				return {};
-			}
+			return node->cost[i];
 		}
 	}
-}
 
-
-void Graph::coutTree()
-{
-	cout << '\n';
-	coutTree(root);
-	cout << '\n';
+	return {};
 }
