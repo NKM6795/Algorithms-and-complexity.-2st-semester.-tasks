@@ -190,6 +190,33 @@ void Graph::variant3(shared_ptr<Node> node)
 
 	if (uncle && !uncle->color)
 	{
+		//Persistent part
+		{
+			shared_ptr<Node> newUncle = make_shared<Node>(uncle);
+			
+			if (uncle->left)
+			{
+				uncle->left->parent = newUncle;
+				newUncle->left = uncle->left;
+			}
+			if (uncle->right)
+			{
+				uncle->right->parent = newUncle;
+				newUncle->right = uncle->right;
+			}
+
+			newUncle->parent = grandparent;
+
+			if (grandparent->left == uncle)
+			{
+				grandparent->left = newUncle;
+			}
+			else
+			{
+				grandparent->right = newUncle;
+			}
+		}
+
 		node->parent->color = true;
 		uncle->color = true;
 
@@ -225,6 +252,38 @@ void Graph::variant4(shared_ptr<Node> node)
 void Graph::variant5(shared_ptr<Node> node)
 {
 	shared_ptr<Node> grandparent = getGrandparent(node);
+
+	//Persistent part
+	{
+		shared_ptr<Node> uncle = getUncle(node);
+
+		if (uncle)
+		{
+			shared_ptr<Node> newUncle = make_shared<Node>(uncle);
+
+			if (uncle->left)
+			{
+				uncle->left->parent = newUncle;
+				newUncle->left = uncle->left;
+			}
+			if (uncle->right)
+			{
+				uncle->right->parent = newUncle;
+				newUncle->right = uncle->right;
+			}
+
+			newUncle->parent = grandparent;
+
+			if (grandparent->left == uncle)
+			{
+				grandparent->left = newUncle;
+			}
+			else
+			{
+				grandparent->right = newUncle;
+			}
+		}
+	}
 
 	node->parent->color = true;
 	grandparent->color = false;
@@ -345,9 +404,10 @@ void Graph::addVertex(shared_ptr<GeographicalObject> cost)
 		root = node;
 		root->color = true;
 	}
-	//variant1(node);
 
 	makeVersion(root, node);
+
+	variant1(node);
 
 	versions.push_back(root);
 }
@@ -360,9 +420,13 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 
 shared_ptr<GeographicalObject> Graph::getVertex(long information, int version)
 {
-	if (version < 0 || version >= int(versions.size()))
+	if (version < 0)
 	{
-		return {};
+		version = 0;
+	}
+	else if (version >= int(versions.size()))
+	{
+		version = int(versions.size()) - 1;
 	}
 
 	shared_ptr<Node> node = versions[version];
@@ -406,9 +470,13 @@ void Graph::coutTree()
 
 void Graph::coutTree(int version)
 {
-	if (version < 0 || version >= int(versions.size()))
+	if (version < 0)
 	{
-		return;
+		version = 0;
+	}
+	else if (version >= int(versions.size()))
+	{
+		version = int(versions.size()) - 1;
 	}
 
 	cout << '\n';

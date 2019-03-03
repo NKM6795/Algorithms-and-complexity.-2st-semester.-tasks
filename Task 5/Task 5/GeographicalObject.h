@@ -36,4 +36,5 @@ public:
 	void setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects);
 
 	shared_ptr<GeographicalObject> getOwnedObject(long additionalInformation);
+	shared_ptr<GeographicalObject> getOwnedObject(long additionalInformation, int version);
 };

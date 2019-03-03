@@ -5,13 +5,13 @@ void demonstration(string fileName)
 {
 	WorkWwithWorldMap workWwithWorldMap(fileName);
 
-	long information;
+	long information, version;
 
-	cin >> information;
+	cin >> version >> information;
 
 	shared_ptr<GeographicalObject> worldMap = workWwithWorldMap.getWorldMap();
 
-	shared_ptr<GeographicalObject> country = worldMap->getOwnedObject(information);
+	shared_ptr<GeographicalObject> country = worldMap->getOwnedObject(information, version);
 
 	if (country)
 	{
@@ -28,9 +28,9 @@ void demonstration(string fileName)
 		return;
 	}
 
-	cin >> information;
+	cin >> version >> information;
 
-	shared_ptr<GeographicalObject> city = country->getOwnedObject(information);
+	shared_ptr<GeographicalObject> city = country->getOwnedObject(information, version);
 
 	if (city)
 	{

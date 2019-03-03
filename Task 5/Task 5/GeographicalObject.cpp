@@ -65,3 +65,8 @@ shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(long additiona
 {
 	return ownedObjects.getVertex(additionalInformation);
 }
+
+shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(long additionalInformation, int version)
+{
+	return ownedObjects.getVertex(additionalInformation, version);
+}
