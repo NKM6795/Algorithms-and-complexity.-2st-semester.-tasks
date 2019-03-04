@@ -17,33 +17,28 @@ class Graph
 {
 	struct Node
 	{
-		bool leaf;
-		
-		int keyNumber;
-		vector<long> key;
+		shared_ptr<GeographicalObject> cost;
 
 		shared_ptr<Node> left,
-			right,
+			sibling,
 			parent;
 
-		vector<shared_ptr<Node> > child;
-
-		vector<shared_ptr<GeographicalObject> > cost;
+		int degree;
 
 		Node();
-		Node(int dimension);
+		Node(shared_ptr<GeographicalObject> cost);
 	};
 
-	int dimension;
+	struct BinomialHeap
+	{
+		shared_ptr<Node> root;
+	};
 
-	shared_ptr<Node> root;
+
+	shared_ptr<BinomialHeap> heap;
 
 
-	shared_ptr<Node> getLeaf(long key);
-
-	void split(shared_ptr<Node> node);
-
-	void insert(shared_ptr<GeographicalObject> cost);
+	shared_ptr<BinomialHeap> merge(shared_ptr<BinomialHeap> heap1, shared_ptr<BinomialHeap> heap2);
 	
 public:
 	Graph();
