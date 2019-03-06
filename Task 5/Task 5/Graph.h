@@ -55,7 +55,7 @@ class Graph
 
 	void makeVersion(shared_ptr<Node> root, shared_ptr<Node> node);
 
-	void coutTree(shared_ptr<Node> node);
+	void coutTree(int deep, shared_ptr<Node> node);
 
 public:
 	Graph();

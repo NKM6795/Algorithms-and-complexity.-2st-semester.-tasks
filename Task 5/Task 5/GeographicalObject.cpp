@@ -55,8 +55,12 @@ void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> >
 	{
 		this->ownedObjects.addVertex(ownedObjects[i]);
 
-		//cout << '\n';
-		//this->ownedObjects.coutTree();
+		for (int j = 0; j <= i; ++j)
+		{
+			this->ownedObjects.coutTree(j);
+			cout << "************\n";
+		}
+		cout << "##############\n";
 	}
 }
 

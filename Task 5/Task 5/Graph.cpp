@@ -215,6 +215,8 @@ void Graph::variant3(shared_ptr<Node> node)
 			{
 				grandparent->right = newUncle;
 			}
+
+			uncle = newUncle;
 		}
 
 		node->parent->color = true;
@@ -367,24 +369,25 @@ void Graph::makeVersion(shared_ptr<Node> root, shared_ptr<Node> node)
 }
 
 
-void Graph::coutTree(shared_ptr<Node> node)
+void Graph::coutTree(int deep, shared_ptr<Node> node)
 {
-	if (node)
+	if (node->right)
 	{
-		cout << "{ ";
-		coutTree(node->left);
-
-		cout << " | ";
-		cout << node->cost->getAdditionalInformation() << " | ";
-
-		coutTree(node->right);
-		cout << " }";
+		coutTree(deep + 1, node->right);
 	}
-	else
+
+	for (int i = 0; i < deep; ++i)
 	{
-		cout << "{}";
+		cout << '\t';
+	}
+	cout << node->cost->getAdditionalInformation() << " {" << 1 * node->color << "}\n";
+
+	if (node->left)
+	{
+		coutTree(deep + 1, node->left);
 	}
 }
+
 
 
 Graph::Graph()
@@ -480,6 +483,6 @@ void Graph::coutTree(int version)
 	}
 
 	cout << '\n';
-	coutTree(versions[version]);
+	coutTree(0, versions[version]);
 	cout << '\n';
 }
