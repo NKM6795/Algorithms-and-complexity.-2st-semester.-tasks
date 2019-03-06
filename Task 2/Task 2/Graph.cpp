@@ -272,6 +272,25 @@ void Graph::variant5(shared_ptr<Node> node)
 }
 
 
+void Graph::coutTree(int deep, shared_ptr<Node> node)
+{
+	if (node->right)
+	{
+		coutTree(deep + 1, node->right);
+	}
+
+	for (int i = 0; i < deep; ++i)
+	{
+		cout << '\t';
+	}
+	cout << node->cost->getAdditionalInformation() << " {" << 1 * node->color << "}\n";
+
+	if (node->left)
+	{
+		coutTree(deep + 1, node->left);
+	}
+}
+
 Graph::Graph()
 {
 
@@ -287,4 +306,10 @@ void Graph::addVertex(shared_ptr<GeographicalObject> cost)
 	smallRecount(node);
 
 	variant1(node);
+}
+
+
+void Graph::coutTree()
+{
+	coutTree(0, root);
 }

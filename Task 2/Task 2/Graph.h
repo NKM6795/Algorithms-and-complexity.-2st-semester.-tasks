@@ -53,6 +53,8 @@ class Graph
 	void variant4(shared_ptr<Node> node);
 	void variant5(shared_ptr<Node> node);
 
+	void coutTree(int deep, shared_ptr<Node> node);
+
 public:
 	Graph();
 
@@ -102,4 +104,6 @@ public:
 
 		return node->cost;
 	}
+
+	void coutTree();
 };
