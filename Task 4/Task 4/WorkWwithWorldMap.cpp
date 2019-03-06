@@ -55,7 +55,7 @@ void WorkWwithWorldMap::getInformationFromTheLine(string &line, float &result, i
 	bool canRead = false;
 
 	bool isInteger = true;
-	float divisor = 0.1f;
+	float divisor = 1.f;
 
 	for (; position < int(line.size()) && line[position] != '}'; ++position)
 	{
@@ -71,16 +71,23 @@ void WorkWwithWorldMap::getInformationFromTheLine(string &line, float &result, i
 			}
 			else
 			{
-				result = result * 10.f + float(line[position] - '0');
+				if (isInteger)
+				{
+					result = result * 10.f + float(line[position] - '0');
+				}
+				else
+				{
+					result = result + divisor * float(line[position] - '0');
+				}
 			}
 
 			if (!isInteger)
 			{
-				divisor *= 10;
+				divisor /= 10.f;
 			}
 		}
 	}
-	result /= divisor;
+
 	++position;
 }
 
@@ -128,6 +135,7 @@ void WorkWwithWorldMap::createWorldMap(string name)
 
 		oldCountry = country;
 		oldCountryPopulation = countryPopulation;
+		oldCountryProbability = countryProbability;
 		
 		cities.push_back(shared_ptr<GeographicalObject>(new GeographicalObject(city, cityPopulation, cityProbability)));
 	}

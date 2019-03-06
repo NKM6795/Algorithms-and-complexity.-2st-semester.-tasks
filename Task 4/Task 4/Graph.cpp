@@ -99,6 +99,25 @@ void Graph::creation(vector<vector<int> > &roots, shared_ptr<Node> parent, int l
 }
 
 
+void Graph::coutTree(int deep, shared_ptr<Node> node)
+{
+	if (node->right)
+	{
+		coutTree(deep + 1, node->right);
+	}
+
+	for (int i = 0; i < deep; ++i)
+	{
+		cout << '\t';
+	}
+	cout << node->cost->getAdditionalInformation() << '\n';
+
+	if (node->left)
+	{
+		coutTree(deep + 1, node->left);
+	}
+}
+
 
 Graph::Graph()
 {
@@ -130,7 +149,7 @@ void Graph::addVertexes(vector<shared_ptr<GeographicalObject> > &costs)
 
 	vector<vector<float> > expectation(number + 2, vector<float>(number + 1, 10000000.f));
 	vector<vector<float> > partialSums(number + 2, vector<float>(number + 1));
-	vector<vector<int> > roots(number + 1, vector<int>(number + 1, -1));
+	vector<vector<int> > roots(number + 1, vector<int>(number + 1, 0));
 
 	for (int i = 0; i < number + 1; ++i)
 	{
@@ -172,6 +191,40 @@ void Graph::addVertexes(vector<shared_ptr<GeographicalObject> > &costs)
 	}
 	
 	creation(roots, {}, 0, number - 1, costs);
+
+	cout << "Result: " << expectation[0][number] << '\n';
+	cout << "Partial sums:\n";
+	for (int i = 0; i <= number; ++i)
+	{
+		for (int j = 0; j <= number; ++j)
+		{
+			cout << expectation[i][j] << ' ';
+		}
+		cout << '\n';
+	}
+	
+	cout << "Partial sums:\n";
+	for (int i = 0; i <= number; ++i)
+	{
+		for (int j = 0; j <= number; ++j)
+		{
+			cout << partialSums[i][j] << ' ';
+		}
+		cout << '\n';
+	}
+
+	cout << "Roots:\n";
+	for (int i = 0; i < number; ++i)
+	{
+		for (int j = 0; j < number; ++j)
+		{
+			cout << roots[i][j] << ' ';
+		}
+		cout << '\n';
+	}
+	cout << "Tree:\n";
+	coutTree();
+	cout << "****************\n\n";
 }
 
 
@@ -208,4 +261,10 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 			}
 		}
 	}
+}
+
+
+void Graph::coutTree()
+{
+	coutTree(0, root);
 }

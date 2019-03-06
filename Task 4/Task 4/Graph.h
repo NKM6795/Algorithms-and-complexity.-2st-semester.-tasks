@@ -37,10 +37,14 @@ class Graph
 
 	void creation(vector<vector<int> > &roots, shared_ptr<Node> parent, int left, int right, vector<shared_ptr<GeographicalObject> > &costs);
 
+	void coutTree(int deep, shared_ptr<Node> node);
+
 public:
 	Graph();
 
 	void addVertexes(vector<shared_ptr<GeographicalObject> > &costs);
 
 	shared_ptr<GeographicalObject> getVertex(long information);
+
+	void coutTree();
 };
