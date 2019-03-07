@@ -44,11 +44,15 @@ class Graph
 	void split(shared_ptr<Node> node);
 
 	void insert(shared_ptr<GeographicalObject> cost);
-	
+
+	void coutTree(int deep, shared_ptr<Node> node);
+
 public:
 	Graph();
 
 	void addVertex(shared_ptr<GeographicalObject> cost);
 
 	shared_ptr<GeographicalObject> getVertex(long information);
+
+	void coutTree();
 };

@@ -71,8 +71,8 @@ void Graph::split(shared_ptr<Node> node)
 
 		for (int i = newNode->keyNumber - 1; i > 0; --i)
 		{
-			newNode->key[i] = node->key[i - 1];
-			newNode->cost[i] = node->cost[i - 1];
+			newNode->key[i] = newNode->key[i - 1];
+			newNode->cost[i] = newNode->cost[i - 1];
 		}
 		newNode->key[0] = node->key[dimension];
 		newNode->cost[0] = node->cost[dimension];
@@ -159,6 +159,36 @@ void Graph::insert(shared_ptr<GeographicalObject> cost)
 }
 
 
+void Graph::coutTree(int deep, shared_ptr<Node> node)
+{
+	for (int i = 0; i < deep; ++i)
+	{
+		cout << '\t';
+	}
+	
+	cout << "{ ";
+	for (int i = 0; i < node->keyNumber; ++i)
+	{
+		cout << node->key[i] << ' ';
+	}
+	cout << "}\n";
+
+	bool needMargin = false;
+	for (int i = 0; i <= node->keyNumber; ++i)
+	{
+		if (node->child[i])
+		{
+			coutTree(deep + 1, node->child[i]);
+			needMargin = true;
+		}
+	}
+	if (needMargin)
+	{
+		cout << '\n';
+	}
+}
+
+
 Graph::Graph()
 {
 	dimension = 5;
@@ -184,4 +214,10 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 	}
 
 	return {};
+}
+
+
+void Graph::coutTree()
+{
+	coutTree(0, root);
 }
