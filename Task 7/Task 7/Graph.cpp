@@ -13,6 +13,18 @@ Graph::Node::Node(shared_ptr<GeographicalObject> cost) : degree(1), cost(cost)
 }
 
 
+Graph::BinomialHeap::BinomialHeap()
+{
+	root = make_shared<Node>();
+}
+
+Graph::BinomialHeap::BinomialHeap(shared_ptr<GeographicalObject> cost)
+{
+	root = make_shared<Node>();
+	root->sibling = make_shared<Node>(cost);
+}
+
+
 shared_ptr<Graph::BinomialHeap> Graph::merge(shared_ptr<BinomialHeap> heap1, shared_ptr<BinomialHeap> heap2)
 {
 	if (!heap1)
@@ -24,11 +36,11 @@ shared_ptr<Graph::BinomialHeap> Graph::merge(shared_ptr<BinomialHeap> heap1, sha
 		return heap1;
 	}
 
-	shared_ptr<BinomialHeap> newHeap;
+	shared_ptr<BinomialHeap> newHeap = make_shared<BinomialHeap>();
 
 	shared_ptr<Node> nodeNewHeap = newHeap->root,
-		nodeHeap1 = heap1->root,
-		nodeHeap2 = heap2->root;
+		nodeHeap1 = heap1->root->sibling,
+		nodeHeap2 = heap2->root->sibling;
 
 	while (nodeHeap1 && nodeHeap2)
 	{
@@ -48,37 +60,98 @@ shared_ptr<Graph::BinomialHeap> Graph::merge(shared_ptr<BinomialHeap> heap1, sha
 
 	if (!nodeHeap1)
 	{
-		while (nodeHeap2)
+		if (nodeHeap2)
 		{
 			nodeNewHeap->sibling = nodeHeap2;
-			nodeHeap2 = nodeHeap2->sibling;
 		}
 	}
 	else
 	{
-		while (nodeHeap1)
+		if (nodeHeap1)
 		{
 			nodeNewHeap->sibling = nodeHeap1;
-			nodeHeap1 = nodeHeap2->sibling;
 		}
 	}
 
-	nodeNewHeap = newHeap->root;
+	shared_ptr<Node> leftSibling;
 
-	while (nodeNewHeap->sibling)
+	bool isChange = true;
+	while (isChange)
 	{
-		if (nodeNewHeap->degree == nodeNewHeap->sibling->degree)
-		{
+		nodeNewHeap = newHeap->root->sibling;
+		leftSibling = newHeap->root;
 
+		isChange = false;
+
+		while (nodeNewHeap->sibling)
+		{
+			if (nodeNewHeap->degree == nodeNewHeap->sibling->degree)
+			{
+				if (nodeNewHeap->cost->getAdditionalInformation() >= nodeNewHeap->sibling->cost->getAdditionalInformation())
+				{
+					nodeNewHeap->parent = nodeNewHeap->sibling;
+					shared_ptr<Node> temp = nodeNewHeap->sibling;
+					nodeNewHeap->sibling = nodeNewHeap->sibling->child;
+					temp->child = nodeNewHeap;
+					++temp->degree;
+					leftSibling->sibling = temp;
+
+					nodeNewHeap = temp;
+				}
+				else
+				{
+					shared_ptr<Node> temp = nodeNewHeap->sibling;
+					nodeNewHeap->sibling = temp->sibling;
+					temp->parent = nodeNewHeap;
+					temp->sibling = nodeNewHeap->child;
+					nodeNewHeap->child = temp;
+					++nodeNewHeap->degree;
+				}
+				isChange = true;
+			}
+			if (nodeNewHeap->sibling)
+			{
+				leftSibling = nodeNewHeap;
+				nodeNewHeap = nodeNewHeap->sibling;
+			}
 		}
 	}
+	return newHeap;
+}
 
+
+void Graph::insert(shared_ptr<GeographicalObject> cost)
+{
+	shared_ptr<BinomialHeap> tempHeap = make_shared<BinomialHeap>(cost);
+
+	heap = merge(heap, tempHeap);
+}
+
+
+void Graph::coutTree(int deep, shared_ptr<Node> node)
+{
+	for (int i = 0; i < deep; ++i)
+	{
+		cout << '\t';
+	}
+
+	cout << node->cost->getAdditionalInformation() << '\n';
+	
+	if (node->child)
+	{
+		coutTree(deep + 1, node->child);
+	}
+
+	if (node->sibling)
+	{
+		coutTree(deep, node->sibling);
+	}
 }
 
 
 Graph::Graph()
 {
-	dimension = 5;
+
 }
 
 
@@ -88,19 +161,20 @@ void Graph::addVertex(shared_ptr<GeographicalObject> cost)
 }
 
 
-shared_ptr<GeographicalObject> Graph::getVertex(long information)
-{
-	shared_ptr<Node> node = heap->root;
-	if (!node)
+shared_ptr<GeographicalObject> Graph::getMinimum()
+{	
+	if (!heap)
 	{
 		return {};
 	}
 
+	shared_ptr<Node> node = heap->root->sibling;
+
 	shared_ptr<GeographicalObject> cost = node->cost;
 
-	while (node->sibling)
+	while (node)
 	{
-		if (node->cost->getAdditionalInformation() > cost->getAdditionalInformation())
+		if (node->cost->getAdditionalInformation() < cost->getAdditionalInformation())
 		{
 			cost = node->cost;
 		}
@@ -108,4 +182,69 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 	}
 
 	return cost;
+}
+
+shared_ptr<GeographicalObject> Graph::extractMinimum()
+{
+	if (!heap)
+	{
+		return {};
+	}
+
+	shared_ptr<Node> node = heap->root;
+
+	shared_ptr<Node> minNode = node->sibling,
+		leftSiblingMinNode = heap->root;
+
+	while (node->sibling)
+	{
+		if (node->sibling->cost->getAdditionalInformation() < minNode->cost->getAdditionalInformation())
+		{
+			minNode = node->sibling;
+			leftSiblingMinNode = node;
+		}
+		node = node->sibling;
+	}
+
+	leftSiblingMinNode->sibling = minNode->sibling;
+
+	if (!heap->root->sibling)
+	{
+		heap.reset();
+	}
+
+	if (minNode->child)
+	{
+		shared_ptr<BinomialHeap> newHeap = make_shared<BinomialHeap>();
+
+		newHeap->root->sibling = minNode->child;
+		node = minNode->child->sibling;
+		minNode->child->sibling = {};
+
+		while (node)
+		{
+			shared_ptr<Node> temp = node->sibling;
+
+			node->sibling = newHeap->root->sibling;
+			newHeap->root->sibling = node;
+			node = temp;
+		}
+
+		heap = merge(heap, newHeap);
+	}
+
+	return minNode->cost;
+}
+
+
+void Graph::coutTree()
+{
+	if (heap)
+	{
+		coutTree(0, heap->root->sibling);
+	}
+	else
+	{
+		cout << "Nothing\n";
+	}
 }

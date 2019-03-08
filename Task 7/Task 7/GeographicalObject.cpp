@@ -58,7 +58,18 @@ void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> >
 }
 
 
-shared_ptr<GeographicalObject> GeographicalObject::getOwnedObject(long additionalInformation)
+void GeographicalObject::coutTree()
 {
-	return ownedObjects.getVertex(additionalInformation);
+	ownedObjects.coutTree();
+}
+
+
+shared_ptr<GeographicalObject> GeographicalObject::getMinimum()
+{
+	return ownedObjects.getMinimum();
+}
+
+shared_ptr<GeographicalObject> GeographicalObject::extractMinimum()
+{
+	return ownedObjects.extractMinimum();
 }

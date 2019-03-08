@@ -1,46 +1,60 @@
 #include "Demonstration.h"
 
 
+void likeUI(shared_ptr<GeographicalObject> &object, shared_ptr<GeographicalObject> parent)
+{
+	long information;
+
+	cout << "enter something\n";
+	cin >> information;
+
+	if (information == -1 || information == -2)
+	{
+		if (information == -1)
+		{
+			object = parent->getMinimum();
+		}
+		else
+		{
+			object = parent->extractMinimum();
+		}
+
+		if (object)
+		{
+			cout << object->getName() << ' ' << object->getAdditionalInformation() << '\n';
+		}
+		else
+		{
+			cout << "Error\n";
+		}
+	}
+	else if (information == -3)
+	{
+		parent->coutTree();
+	}
+}
+
+
 void demonstration(string fileName)
 {
 	WorkWwithWorldMap workWwithWorldMap(fileName);
 
-	long information;
-	
-	cin >> information;
-
 	shared_ptr<GeographicalObject> worldMap = workWwithWorldMap.getWorldMap();
+	shared_ptr<GeographicalObject> country;
+	shared_ptr<GeographicalObject> city;
 
-	shared_ptr<GeographicalObject> country = worldMap->getOwnedObject(information);
-
-	if (country)
+	while (true)
 	{
-		cout << country->getName() << ' ' << country->getAdditionalInformation() << '\n';
+		cout << "Work with country, ";
+		likeUI(country, worldMap);
+
+		if (country)
+		{
+			cout << "Work with city, ";
+			likeUI(city, country);
+			country = {};
+		}
 	}
-	else
-	{
-		cout << "Error\n";
-
-		cin.get();
-		cin.get();
-		cin.get();
-
-		return;
-	}
-
-	cin >> information;
-
-	shared_ptr<GeographicalObject> city = country->getOwnedObject(information);
-
-	if (city)
-	{
-		cout << city->getName() << ' ' << city->getAdditionalInformation() << '\n';
-	}
-	else
-	{
-		cout << "Error\n";
-	}
-
 	cin.get();
 	cin.get();
 	cin.get();

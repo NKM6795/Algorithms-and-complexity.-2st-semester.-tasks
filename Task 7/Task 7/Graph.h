@@ -19,7 +19,7 @@ class Graph
 	{
 		shared_ptr<GeographicalObject> cost;
 
-		shared_ptr<Node> left,
+		shared_ptr<Node> child,
 			sibling,
 			parent;
 
@@ -32,6 +32,9 @@ class Graph
 	struct BinomialHeap
 	{
 		shared_ptr<Node> root;
+
+		BinomialHeap();
+		BinomialHeap(shared_ptr<GeographicalObject> cost);
 	};
 
 
@@ -39,11 +42,19 @@ class Graph
 
 
 	shared_ptr<BinomialHeap> merge(shared_ptr<BinomialHeap> heap1, shared_ptr<BinomialHeap> heap2);
-	
+
+	void insert(shared_ptr<GeographicalObject> cost);
+
+	void coutTree(int deep, shared_ptr<Node> node);
+
 public:
 	Graph();
 
 	void addVertex(shared_ptr<GeographicalObject> cost);
 
-	shared_ptr<GeographicalObject> getVertex(long information);
+	shared_ptr<GeographicalObject> getMinimum();
+
+	shared_ptr<GeographicalObject> extractMinimum();
+
+	void coutTree();
 };
