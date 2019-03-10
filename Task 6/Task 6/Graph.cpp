@@ -61,8 +61,17 @@ void Graph::split(shared_ptr<Node> node)
 		newNode->key[i] = node->key[i + dimension + 1];
 		newNode->cost[i] = node->cost[i + dimension + 1];
 		newNode->child[i] = node->child[i + dimension + 1];
+		if (newNode->child[i])
+		{
+			newNode->child[i]->parent = newNode;
+		}
 	}
+
 	newNode->child[newNode->keyNumber] = node->child[2 * dimension];
+	if (newNode->child[newNode->keyNumber])
+	{
+		newNode->child[newNode->keyNumber]->parent = newNode;
+	}
 
 	if (node->leaf)
 	{
@@ -172,6 +181,7 @@ void Graph::coutTree(int deep, shared_ptr<Node> node)
 		cout << node->key[i] << ' ';
 	}
 	cout << "}\n";
+	
 
 	bool needMargin = false;
 	for (int i = 0; i <= node->keyNumber; ++i)
@@ -205,11 +215,29 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 {
 	shared_ptr<Node> node = getLeaf(information);
 
-	for (int i = 0; i < node->keyNumber; ++i)
+	int oldI = 0;
+	for (int i = 0; i < node->keyNumber && node->key[i] <= information; ++i)
 	{
 		if (information == node->key[i])
 		{
 			return node->cost[i];
+		}
+		oldI = i;
+	}
+
+	if (oldI + 1 < node->keyNumber && abs(node->cost[oldI]->getAdditionalInformation() - information) > abs(node->cost[oldI + 1]->getAdditionalInformation() - information))
+	{
+		return node->cost[oldI + 1];
+	}
+	else
+	{
+		if (node->right && abs(node->cost[oldI]->getAdditionalInformation() - information) > abs(node->right->cost[0]->getAdditionalInformation() - information))
+		{
+			return node->right->cost[0];
+		}
+		else
+		{
+			return node->cost[oldI];
 		}
 	}
 

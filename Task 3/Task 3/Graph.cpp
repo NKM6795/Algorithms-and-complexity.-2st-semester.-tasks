@@ -311,7 +311,14 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 			}
 			else
 			{
-				return {};
+				if (node->parent && abs(node->cost->getAdditionalInformation() - information) > abs(node->parent->cost->getAdditionalInformation() - information))
+				{
+					return node->parent->cost;
+				}
+				else
+				{
+					return node->cost;
+				}
 			}
 		}
 		else
@@ -322,7 +329,14 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 			}
 			else
 			{
-				return {};
+				if (node->parent && abs(node->cost->getAdditionalInformation() - information) > abs(node->parent->cost->getAdditionalInformation() - information))
+				{
+					return node->parent->cost;
+				}
+				else
+				{
+					return node->cost;
+				}
 			}
 		}
 	}

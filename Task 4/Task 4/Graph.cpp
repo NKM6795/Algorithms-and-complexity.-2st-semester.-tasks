@@ -193,35 +193,35 @@ void Graph::addVertexes(vector<shared_ptr<GeographicalObject> > &costs)
 	creation(roots, {}, 0, number - 1, costs);
 
 	cout << "Result: " << expectation[0][number] << '\n';
-	cout << "Partial sums:\n";
-	for (int i = 0; i <= number; ++i)
-	{
-		for (int j = 0; j <= number; ++j)
-		{
-			cout << expectation[i][j] << ' ';
-		}
-		cout << '\n';
-	}
-	
-	cout << "Partial sums:\n";
-	for (int i = 0; i <= number; ++i)
-	{
-		for (int j = 0; j <= number; ++j)
-		{
-			cout << partialSums[i][j] << ' ';
-		}
-		cout << '\n';
-	}
+	//cout << "Partial sums:\n";
+	//for (int i = 0; i <= number; ++i)
+	//{
+	//	for (int j = 0; j <= number; ++j)
+	//	{
+	//		cout << expectation[i][j] << ' ';
+	//	}
+	//	cout << '\n';
+	//}
+	//
+	//cout << "Partial sums:\n";
+	//for (int i = 0; i <= number; ++i)
+	//{
+	//	for (int j = 0; j <= number; ++j)
+	//	{
+	//		cout << partialSums[i][j] << ' ';
+	//	}
+	//	cout << '\n';
+	//}
 
-	cout << "Roots:\n";
-	for (int i = 0; i < number; ++i)
-	{
-		for (int j = 0; j < number; ++j)
-		{
-			cout << roots[i][j] << ' ';
-		}
-		cout << '\n';
-	}
+	//cout << "Roots:\n";
+	//for (int i = 0; i < number; ++i)
+	//{
+	//	for (int j = 0; j < number; ++j)
+	//	{
+	//		cout << roots[i][j] << ' ';
+	//	}
+	//	cout << '\n';
+	//}
 	cout << "Tree:\n";
 	coutTree();
 	cout << "****************\n\n";
@@ -246,7 +246,14 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 			}
 			else
 			{
-				return {};
+				if (node->parent && abs(node->cost->getAdditionalInformation() - information) > abs(node->parent->cost->getAdditionalInformation() - information))
+				{
+					return node->parent->cost;
+				}
+				else
+				{
+					return node->cost;
+				}
 			}
 		}
 		else
@@ -257,7 +264,14 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 			}
 			else
 			{
-				return {};
+				if (node->parent && abs(node->cost->getAdditionalInformation() - information) > abs(node->parent->cost->getAdditionalInformation() - information))
+				{
+					return node->parent->cost;
+				}
+				else
+				{
+					return node->cost;
+				}
 			}
 		}
 	}
