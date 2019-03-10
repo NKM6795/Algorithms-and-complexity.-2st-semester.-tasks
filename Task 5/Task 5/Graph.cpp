@@ -255,38 +255,6 @@ void Graph::variant5(shared_ptr<Node> node)
 {
 	shared_ptr<Node> grandparent = getGrandparent(node);
 
-	//Persistent part
-	{
-		shared_ptr<Node> uncle = getUncle(node);
-
-		if (uncle)
-		{
-			shared_ptr<Node> newUncle = make_shared<Node>(uncle);
-
-			if (uncle->left)
-			{
-				uncle->left->parent = newUncle;
-				newUncle->left = uncle->left;
-			}
-			if (uncle->right)
-			{
-				uncle->right->parent = newUncle;
-				newUncle->right = uncle->right;
-			}
-
-			newUncle->parent = grandparent;
-
-			if (grandparent->left == uncle)
-			{
-				grandparent->left = newUncle;
-			}
-			else
-			{
-				grandparent->right = newUncle;
-			}
-		}
-	}
-
 	node->parent->color = true;
 	grandparent->color = false;
 
@@ -448,7 +416,7 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information, int version)
 			}
 			else
 			{
-				if (node->parent && abs(node->cost->getAdditionalInformation() - information) > abs(node->parent->cost->getAdditionalInformation()))
+				if (node->parent && abs(node->cost->getAdditionalInformation() - information) > abs(node->parent->cost->getAdditionalInformation() - information))
 				{
 					return node->parent->cost;
 				}
