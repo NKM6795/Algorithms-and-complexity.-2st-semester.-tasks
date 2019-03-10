@@ -20,32 +20,40 @@ class Graph
 		shared_ptr<GeographicalObject> cost;
 
 		shared_ptr<Node> child,
-			sibling,
+			left,
+			right,
 			parent;
 
 		int degree;
+
+		bool mark;
 
 		Node();
 		Node(shared_ptr<GeographicalObject> cost);
 	};
 
-	struct BinomialHeap
+	struct FibonacciHeap
 	{
+		int size;
 		shared_ptr<Node> root;
 
-		BinomialHeap();
-		BinomialHeap(shared_ptr<GeographicalObject> cost);
+		FibonacciHeap();
+		FibonacciHeap(shared_ptr<GeographicalObject> cost);
 	};
 
 
-	shared_ptr<BinomialHeap> heap;
+	shared_ptr<FibonacciHeap> heap;
 
 
-	shared_ptr<BinomialHeap> merge(shared_ptr<BinomialHeap> heap1, shared_ptr<BinomialHeap> heap2);
+	void unionLists(shared_ptr<Node> first, shared_ptr<Node> second);
+
+	void merge(shared_ptr<FibonacciHeap> heap);
 
 	void insert(shared_ptr<GeographicalObject> cost);
 
-	void coutTree(int deep, shared_ptr<Node> node);
+	void consolidate();
+
+	void coutTree(int deep, shared_ptr<Node> node, shared_ptr<Node> begin);
 
 public:
 	Graph();
