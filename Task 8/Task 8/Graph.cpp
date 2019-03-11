@@ -137,7 +137,7 @@ void Graph::consolidate()
 				addTo->child->right->left = adding;
 				addTo->child->right = adding;
 			}
-			++addTo->degree;
+			addTo->degree += adding->degree + 1;
 			node = addTo;
 		}
 
@@ -156,7 +156,7 @@ void Graph::coutTree(int deep, shared_ptr<Node> node, shared_ptr<Node> begin)
 		cout << '\t';
 	}
 
-	cout << node->cost->getAdditionalInformation() << '\n';
+	cout << node->cost->getAdditionalInformation() << ' ' << node->degree << '\n';
 	
 	if (node->child)
 	{
