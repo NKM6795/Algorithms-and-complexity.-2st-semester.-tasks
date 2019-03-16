@@ -127,7 +127,7 @@ Graph::Graph()
 
 void Graph::addVertexes(vector<shared_ptr<GeographicalObject> > &costs)
 {
-	int number = int(costs.size());
+ 	int number = int(costs.size());
 
 	if (costs.size() == 1)
 	{
@@ -232,6 +232,8 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 {
 	shared_ptr<Node> node = root;
 
+	shared_ptr<GeographicalObject> cost = node->cost;
+
 	while (true)
 	{
 		if (node->cost->getAdditionalInformation() == information)
@@ -240,38 +242,34 @@ shared_ptr<GeographicalObject> Graph::getVertex(long information)
 		}
 		else if (node->cost->getAdditionalInformation() < information)
 		{
+			if (abs(cost->getAdditionalInformation() - information) > abs(node->cost->getAdditionalInformation() - information))
+			{
+				cost = node->cost;
+			}
+
 			if (node->right)
 			{
 				node = node->right;
 			}
 			else
 			{
-				if (node->parent && abs(node->cost->getAdditionalInformation() - information) > abs(node->parent->cost->getAdditionalInformation() - information))
-				{
-					return node->parent->cost;
-				}
-				else
-				{
-					return node->cost;
-				}
+				return cost;
 			}
 		}
 		else
 		{
+			if (abs(cost->getAdditionalInformation() - information) > abs(node->cost->getAdditionalInformation() - information))
+			{
+				cost = node->cost;
+			}
+
 			if (node->left)
 			{
 				node = node->left;
 			}
 			else
 			{
-				if (node->parent && abs(node->cost->getAdditionalInformation() - information) > abs(node->parent->cost->getAdditionalInformation() - information))
-				{
-					return node->parent->cost;
-				}
-				else
-				{
-					return node->cost;
-				}
+				return cost;
 			}
 		}
 	}

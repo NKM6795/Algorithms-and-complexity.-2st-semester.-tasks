@@ -137,7 +137,7 @@ void Graph::consolidate()
 				addTo->child->right->left = adding;
 				addTo->child->right = adding;
 			}
-			addTo->degree += adding->degree + 1;
+			++addTo->degree;
 			node = addTo;
 		}
 
