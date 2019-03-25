@@ -51,25 +51,11 @@ long GeographicalObject::getAdditionalInformation()
 
 void GeographicalObject::setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects)
 {
-	for (int i = 0; i < int(ownedObjects.size()); ++i)
-	{
-		this->ownedObjects.addVertex(ownedObjects[i]);
-	}
+	this->ownedObjects.addVertexes(ownedObjects);
 }
 
 
-void GeographicalObject::coutTree()
+void GeographicalObject::coutGraph()
 {
-	ownedObjects.coutTree();
-}
-
-
-shared_ptr<GeographicalObject> GeographicalObject::getMinimum()
-{
-	return ownedObjects.getMinimum();
-}
-
-shared_ptr<GeographicalObject> GeographicalObject::extractMinimum()
-{
-	return ownedObjects.extractMinimum();
+	ownedObjects.coutGraph();
 }

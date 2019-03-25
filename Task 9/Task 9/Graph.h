@@ -15,54 +15,70 @@ class GeographicalObject;
 
 class Graph
 {
-	struct Node
+	//Fibonacci Heap
+	class FibonacciHeap
 	{
-		shared_ptr<GeographicalObject> cost;
+		struct Node
+		{
+			pair<int, int> cost;
 
-		shared_ptr<Node> child,
-			left,
-			right,
-			parent;
+			shared_ptr<Node> child,
+				left,
+				right,
+				parent;
 
-		int degree;
+			int degree;
 
-		bool mark;
+			bool mark;
 
-		Node();
-		Node(shared_ptr<GeographicalObject> cost);
-	};
+			Node();
+			Node(pair<int, int> cost);
+		};
 
-	struct FibonacciHeap
-	{
 		int size;
 		shared_ptr<Node> root;
 
+	public:
 		FibonacciHeap();
-		FibonacciHeap(shared_ptr<GeographicalObject> cost);
+		FibonacciHeap(pair<int, int> cost);
+		
+		bool empty();
+
+		void unionLists(shared_ptr<Node> first, shared_ptr<Node> second);
+
+		void insert(pair<int, int> cost);
+
+		void consolidate();
+
+		pair<int, int> getMinimum();
+
+		pair<int, int> extractMinimum();
+
+		void coutTree(int deep, shared_ptr<Node> node, shared_ptr<Node> begin);
+
+		void coutTree();
 	};
+	
+	//Graph
+	vector<shared_ptr<GeographicalObject> > costs;
 
+	vector<vector<pair<int, int> > > graph;
+	int number;
 
-	shared_ptr<FibonacciHeap> heap;
+	void getLinks();
 
+	vector<vector<int> > johnson(vector<vector<pair<int, int> > > &graph);
 
-	void unionLists(shared_ptr<Node> first, shared_ptr<Node> second);
+	bool bellmanFord(vector<vector<pair<int, int> > > &graph, int vertex, vector<vector<int> > &weights, vector<int> &distance);
 
-	void merge(shared_ptr<FibonacciHeap> heap);
+	void dijkstra(vector<vector<pair<int, int> > > &graph, int vertex, vector<vector<int> > &weights, vector<int> &distance);
 
-	void insert(shared_ptr<GeographicalObject> cost);
-
-	void consolidate();
-
-	void coutTree(int deep, shared_ptr<Node> node, shared_ptr<Node> begin);
+	void coutMatrix(vector<vector<int> > &weights);
 
 public:
 	Graph();
 
-	void addVertex(shared_ptr<GeographicalObject> cost);
+	void addVertexes(vector<shared_ptr<GeographicalObject> > costs);
 
-	shared_ptr<GeographicalObject> getMinimum();
-
-	shared_ptr<GeographicalObject> extractMinimum();
-
-	void coutTree();
+	void coutGraph();
 };

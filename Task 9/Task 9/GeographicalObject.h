@@ -35,9 +35,5 @@ public:
 
 	void setOwnedObjects(vector<shared_ptr<GeographicalObject> > &ownedObjects);
 
-	void coutTree();
-
-	shared_ptr<GeographicalObject> getMinimum();
-
-	shared_ptr<GeographicalObject> extractMinimum();
+	void coutGraph();
 };
